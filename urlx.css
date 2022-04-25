@@ -1,0 +1,624 @@
+@import url('https://fonts.googleapis.com/css?family=Lato');
+
+html {
+    --gridSize: 48px;
+    --gridBorder: 2px;
+    --gridBorderColor: #444444;
+
+    --emojired: #DD2E44;
+    --emojiyellow: #F4900C;
+    --emojigreen: #77B255;
+    --emojiblue: #3B88C3;
+    --emojipurple: #9266CC;
+    --emojigrey: #31373D;
+    
+    --lightgrey: #555555
+}
+
+p, h1, h2, h3, input, select, button {
+    color: white;
+    font-family: Lato, Arial;
+}
+
+p {
+    font-size: 18px;
+    line-height: 28px;
+}
+
+a {
+    font-weight: bold;
+    color: #cccccc !important;
+}
+
+h1 {
+    margin-top: 5px;
+}
+
+h3 {
+    margin-top: 0px;
+    margin-bottom: 6px;
+}
+
+body {
+    background-color: #111111; 
+    height: 100%;
+    margin: 0px 0px;
+    overflow: hidden;
+}
+
+hr {
+    width: 100%;
+    min-height: calc(var(--gridBorder) * 1.5);
+    height: calc(var(--gridBorder) * 1.5);
+    border: none;
+    background-image: linear-gradient(90deg, rgba(55,55,55,0) 0%, rgba(55,55,55,0) 10%, rgba(55,55,55,1) 30%, rgba(55,55,55,1) 70%, rgba(55,55,55,0) 90%, rgba(55,55,55,0) 100%);
+}
+
+.nobottom {
+    margin-bottom: 1px;
+}
+
+.simpleFlex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup {
+    position: fixed; 
+    display: flex;
+    align-content: center;
+    justify-content: center; 
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.75);
+    z-index: 3;
+    text-align: center;
+}
+
+.popupBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: black;
+    border-radius: 20px;
+    border: 3px solid #333333;
+    width: 550px;
+    padding: 20px 60px;
+}
+
+.uploadBox {
+    padding: 20px 40px;
+    width: 1000px;
+    height: 600px;
+}
+
+.uploadBox h1 {
+    font-size: 36px;
+    margin-top: 10px
+}
+
+.uploadOption {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 300px;
+    height: 420px;
+    margin: 0px 15px;
+}
+
+.chartBox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #111111;
+    border: 2px dashed white;
+    border-radius: 15px;
+    width: 180px;
+    height: 180px;
+    margin-bottom: 20px;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-in-out;
+    cursor: pointer;
+}
+
+.chartBox img {
+    height: 50%;
+}
+
+.chartBox:hover {
+    background-color: #222222;
+}
+
+.chartBox.dragOver, .chartBox:active {
+    background-color: #333333;
+}
+
+.uploadOption .loadFrom {
+    font-weight: bold;
+    font-size: 25px;
+    margin-top: 2px;
+    margin-bottom: 0px;
+}
+
+.uploadOption .loadInfo {
+    margin-top: 15px;
+    line-height: 26px;
+}
+
+.uploadOption .loadExtra {
+    opacity: 75%;
+    line-height: 26px;
+}
+
+.selectedChartType {
+    width: 800px;
+}
+
+.selectedChartType .chartBox{
+    width: 750px;
+    height: 250px;
+}
+
+#logging {
+    display: flex;
+    margin-left: 20px 
+}
+
+#logging p {
+    width: 275px;
+    font-family: consolas;
+    font-size: 18px;
+    line-height: 25px;
+}
+
+
+#editor {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    overflow-x: hidden;
+    height: 100%;
+}
+
+#chart {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex: 1 1;
+    justify-content: center;
+    align-items: flex-start;
+    align-content: flex-start;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin: 0px 25px 25px 0px;
+}
+
+::-webkit-scrollbar {
+    height: 12px;
+    width: 16px;
+    background-color: #333333;
+}
+  
+::-webkit-scrollbar-thumb {
+    background-color: #888888;
+}
+
+.beat {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    margin: 10px 10px;
+    background-color: var(--gridBorderColor);
+    border: var(--gridBorder) solid var(--gridBorderColor);
+}
+
+.beat.missingNotes {
+    border-color: #CC0000;
+}
+
+.beat.highlighted {
+    border-color: cyan;
+}
+
+.note {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: var(--gridSize);
+    height: var(--gridSize);
+    cursor: pointer;
+    background-color: #222222;
+    border: var(--gridBorder) solid var(--gridBorderColor);
+    user-select: none;
+    position: relative;
+}
+
+.note:not([note="-"]) {
+    background-color: var(--emojiblue);
+}
+
+.note.selected {
+    z-index: 3;
+    background-color: #777777;
+    border-color: lime;
+}
+
+.note:not([note="-"]).selected {
+    background-color: aqua;
+    border-color: rgb(0, 128, 255);
+}
+
+.note.highlighted {
+    background-color: aqua;
+    border-color: aqua;
+}
+
+.note.auto {
+    filter: saturate(0);
+}
+
+/* .note.auto:after {
+    content: "🤖";
+    position: absolute;
+    right: 0%;
+    bottom: 0%;
+} */
+
+.note[bpm]:after {
+    content: "🕒";
+    position: absolute;
+    left: 0%;
+    bottom: 0%;
+}
+
+.note .emoji {
+    pointer-events: none;
+}
+
+.note .emoji p {
+    font-size: calc(var(--gridSize) * 0.6);
+}
+
+#editorButtons {
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px;
+    margin-top: 20px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.editorField {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 15px;
+    min-height: 32px;
+}
+
+.editorSectionSection {
+    display: flex;
+}
+
+.editorSection {
+    display: flex;
+    flex-direction: column;
+    margin: 0px 32px;
+}
+
+.editorSection p {
+    margin: 0px 0px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+input, button, select {
+    height: 32px;
+    margin: 0px 10px 0px 0px;
+    background-color: var(--lightgrey);
+    transition: background-color 0.1s linear;
+    border-radius: 4px;
+    outline: none;
+    border: none;
+}
+
+
+input, select {
+    width: 60px;
+    margin-left: 10px;
+    text-align: center;
+    font-size: 18px;
+    -moz-appearance: textfield;
+}
+
+
+button {
+    cursor: pointer;
+    width: 32px;
+    font-weight: bold;
+    background-color: var(--emojiblue);
+    background-repeat: no-repeat;
+    background-size: 22px;
+    background-position: center;
+    user-select: none;
+}
+
+button, label span, .bigButton {
+    transition-duration: 0.1s;
+    transition-timing-function: ease-in-out;
+}
+
+button:active, label span:active, .bigButton:active {
+    transform: scale(1.05);
+}
+
+input:not(.noHover):hover, select:not(.noHover):hover {
+    background-color: #696969;
+}
+
+.editorSection ::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+    font-weight: normal;
+}
+
+label input[type=checkbox] {
+    display: none;
+}
+
+label input[type=checkbox] + span {
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: inline-block;
+    margin-right: 10px;
+    background-image: url(./assets/check_off.svg);
+}
+
+label input[type=checkbox]:checked + span {
+    background-image: url(./assets/check_on.svg);
+}
+
+.chartSetting, .playerSetting {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
+    text-align: left;
+    width: 500px;
+}
+
+.playerSetting {
+    width: 525px;
+    margin-bottom: 30px;
+}
+
+.playerSetting p {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    width: 150px;
+}
+
+.playerSetting select {
+    width: 200px;
+}
+
+.playerSetting :not(p, span) {
+    margin-left: 0px;
+}
+
+.playerSetting .settingInfo {
+    width: 100%;
+    font-size: 15px;
+    margin-top: 4px;
+    line-height: 23px;
+    color: #aaaaaa;
+}
+
+.playerOption {
+    background-color: var(--emojigrey);
+    margin: 10px 10px;
+    padding: 8px 8px;
+    width: 56px;
+    height: 56px;
+}
+
+.playerOption:hover {
+    transform: scale(1.05);
+}
+
+.clapSetting select { margin-right: 0px; width: 170px; }
+.clapSetting input { margin-right: 5px; width: 50px; }
+.clapSetting button { margin-left: 35px; background-size: 20px; }
+
+.saveButton {
+    width: 130px;
+    height: 35px;
+    background-color: var(--emojipurple);
+    text-align: left;
+    padding-left: 38px;
+    font-size: 17px;
+    background-position-x: 7px;
+}
+
+.textButton {
+    width: 140px;
+    height: 38px;
+    background-color: var(--emojiblue);
+    text-align: center;
+    font-size: 18px;
+}
+
+.editorSection input, .editorSection select {
+    font-weight: bold
+}
+
+select {
+    width: 150px;
+    text-align: left;
+    padding-left: 5px;
+}
+
+input::-webkit-inner-spin-button, input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.confirmButton {
+    width: 32px;
+    height: 32px;
+    background-image: url(./assets/check_on.svg);
+}
+
+.plusButton {
+    background-image: url(./assets/plus.svg);
+}
+
+.bigButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--emojiblue);
+    width: 200px;
+    height: 45px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.bigButton p {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.popupBox .gameList {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.popupBox .gameOption {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    cursor: pointer;
+    transition-duration: 0.1s;
+    padding: 0px 25px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+}
+
+.popupBox .gameOption:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.popupBox .gameOption img {
+    height: 64px;
+    width: 64px;
+    margin-right: 20px;
+    border-radius: 5px;
+}
+
+.popupBox .gameDetails {
+    display: flex;
+    width: 270px;
+    height: 60px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+#gameImportSettings .setting {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 400px;
+}
+
+#gameImportSettings .setting select {
+    width: 240px;
+}
+
+.popupBox .gameDetails h3 { margin: 0px 0px; font-size: 25px; }
+.popupBox .gameDetails p { margin: 0px 0px; font-size: 20px; font-weight: normal; }
+
+.keyExamples {
+    margin-bottom: 22px;
+}
+
+.keyExamples p {
+    background-color: #1a1a1a;
+    white-space: nowrap;
+    padding: 5px 7px;
+    margin: 6px 7px;
+    border: 1px solid white;
+    border-radius: 5px;
+}
+
+.keyExamples key {
+    cursor: default;
+    background-color: black;
+    font-size: 16px;
+    border: 1px solid #aaaaaa;
+    border-radius: 3px;
+    padding: 2px 4px;
+    margin: 0px 2px;
+}
+
+.keyExamples span {
+    width: 100%;
+}
+
+.ourple {
+    background-color: var(--emojipurple);
+}
+
+.spin {
+    -webkit-animation: spin 4s linear infinite;
+    -moz-animation: spin 4s linear infinite;
+    animation: spin 4s linear infinite;
+    mix-blend-mode: luminosity;
+}
+
+.unsupported {
+    cursor: not-allowed;
+    filter: saturate(50%);
+    opacity: 33%;
+}
+
+.unsupported * {
+    cursor: not-allowed !important;
+}
+
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+@media screen and (max-width: 1000px) {
+    html {
+        --gridSize: 32px;
+        --gridBorder: 1.5px;
+    }
+
+    .editorSection {
+        margin-right: 16px;
+    }
+
+    .saveButtonList {
+        margin-right: 0px;
+    }
+
+    .saveButton {
+        width: 38px;
+        height: 35px;
+        padding-left: 0px;
+        font-size: 0px;
+        margin-right: 0px;
+    }
+}

@@ -1,0 +1,472 @@
+<html lang="en">
+<head>
+    <meta name="theme-color" content="#3B88C3">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-135255146-1"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
+    <script>window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'UA-135255146-1');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="URLX">
+    <meta property="og:description" content="A rhythm game played in your browser's address bar. (currently in alpha)">
+    <meta property="og:type" content="website">
+    <title>URLX alpha</title>
+    <link href="./urlx.css" type="text/css" rel="stylesheet">
+    <link rel="icon" href="./assets/link.svg"></link>
+</head>
+<body>
+
+    <div id="logging" style="display: none;">
+        <p id="conductorDebug"></p>
+        <p id="gameDebug"></p>
+        <p id="hitsDebug"></p>
+        <p id="missesDebug"></p>
+    </div>
+
+    <div id="editor">
+        <div id="editorButtons">
+            <div class="editorSectionSection"> <!-- left -->
+                <div class="editorSection saveButtonList">
+
+                    <div class="editorField usesFilesystem">
+                        <button id="saveBtn" class="saveButton" title="Save" style="background-image: url(./assets/save.svg);" onclick="game.editor.saveChart()">Save</button>
+                        <button id="saving" class="spin" style="height: 35px; display: none; opacity: 50%; background-color: rgba(0, 0, 0, 0); background-image: url(./assets/cog.svg);"></button>
+                    </div>
+    
+                    <div class="editorField">
+                        <button id="exportBtn" class="saveButton" title="Export" style="background-image: url(./assets/export.svg);" onclick="game.editor.zipChart()">Export</button>
+                        <button id="exporting" class="spin" style="height: 35px; display: none; opacity: 50%; background-color: rgba(0, 0, 0, 0); background-image: url(./assets/cog.svg);"></button>
+                    </div>
+    
+                    <div class="editorField">
+                        <button id="uploadButton" class="saveButton" title="Load" style="background-image: url(./assets/load.svg);" onclick="if (!game.active) $('#uploadPopup').show()">Load</button>
+                    </div>
+                </div>
+    
+                <div class="editorSection">
+    
+                    <div class="editorField" id="startBtn">
+                        <div class="bigButton" onclick="game.start(game.editor.selectedBeat || 1)"><p>Play!</p></div>
+                    </div>
+    
+                    <div class="editorField" id="stopBtn" style="display: none;">
+                        <div class="bigButton" style="background-color: var(--emojired);" onclick="game.restart()"><p>Stop</p></div>
+                    </div>
+    
+                    <div class="editorField">
+                        <button style="background-image: url(./assets/less.svg);" onclick="game.conductor.setSpeed(-0.1, true)"></button>
+                        <button style="background-image: url(./assets/more.svg);" onclick="game.conductor.setSpeed(0.1, true)"></button>
+                        <p>Speed (<span id="currentSpeed">1.0</span>x)</p> 
+                    </div>
+    
+                    <div class="editorField" style="margin-bottom: 0px">
+                        <p>Filename:</p> 
+                        <input id="chartName" autocomplete="off" style="width: 110px" placeholder="untitled" onchange="$(this).val(safeFilename($(this).val()))"> 
+                    </div>
+                </div>
+    
+                <div class="editorSection">
+                    <div class="editorField" title="Automatically hits all notes">
+                        <label>
+                            <input type="checkbox" id="toggleAutoplay" checked onclick="CONFIG.autoplay = $(this).prop('checked')">
+                            <span></span>
+                        </label>
+                        <p>Autoplay</p>
+                    </div>
+    
+                    <div class="editorField" title="Automatically scrolls the screen to the highlighted beat during playback">
+                        <label>
+                            <input type="checkbox" id="toggleAutoscroll" checked onclick="CONFIG.autoscroll = $(this).prop('checked')">
+                            <span></span>
+                        </label>
+                        
+                        <p>Autoscroll</p>
+                    </div>
+    
+                    <div class="editorField" title="Plays a metronome along with the song">
+                        <label>
+                            <input type="checkbox" id="toggleMetronome" onclick="CONFIG.metronome = $(this).prop('checked')">
+                            <span></span>
+                        </label>
+                        <p>Metronome</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="editorSectionSection"> <!-- right -->
+                <div class="editorSection" style="width: 180px; margin-right: 10px;">
+                    <div class="editorField">
+                        <p>Beat: <span id="currentBeat">-</span></p> 
+                    </div>
+    
+                    <div class="editorField">
+                        <p>Time: <span id="currentTime">-</span></p> 
+                    </div>
+
+                    <div class="editorField">
+                        <button class="ourple" title="Settings" style="background-image: url(./assets/cog.svg);" onclick="$('#playerSettings').show()"></button>
+                        <button class="ourple" title="Controls and hotkeys" style="background-image: url(./assets/abcd.svg); background-size: 25px;" onclick="$('#keyMenu').show()"></button>
+                        <button class="ourple" title="Help and credits" style="background-image: url(./assets/help.svg);" onclick="$('#helpMenu').show()"></button>
+                        <button class="ourple chartVisible" title="Hide chart" style="background-image: url(./assets/hide.svg);" onclick="toggleChartVisiblity(false)"></button>
+                        <button class="ourple chartHidden" title="Show chart" style="display: none; background-image: url(./assets/show.svg);" onclick="toggleChartVisiblity(true)"></button>
+                    </div>
+                </div>
+    
+                <div class="editorSection" id="noteInfo" style="width: 325px; display: none">
+                    <div class="editorField">
+                        <p style="width: 70px">Note:</p> 
+                        <select id="currentArrow" onchange="game.editor.setNote($(this).val(), game.editor.selectedBeat)">
+                            <option value="-">(empty)</option>
+                            <option value="o">Space</option>
+                            <option value="<">Left</option>
+                            <option value="v">Down</option>
+                            <option value="^">Up</option>
+                            <option value=">">Right</option>
+                            <option value="+">Any Arrow</option>
+                            <option value="+o">Space+Arrow</option>
+                            <option value="<^">Up+Left</option>
+                            <option value=">^">Up+Right</option>
+                            <option value="<v">Down+Left</option>
+                            <option value=">v">Down+Right</option>
+                            <option value="^v">Up+Down</option>
+                            <option value="<>">Left+Right</option>
+                            <option value="x">Bomb</option>
+                        </select>
+                        <button onclick="$('#chartSettings').show()" style="background-image: url(./assets/cog.svg);"></button>
+
+                    </div>
+    
+                    <div class="editorField">
+                        <p style="width: 70px">BPM:</p> 
+                        <input id="currentBPMChange" class="bpmShortcut" onchange="game.editor.confirmBPMChange()" placeholder="-" type="number">
+                    </div>
+    
+                    <div class="editorField">
+                        <p style="width: 70px">Divide:</p> 
+                        <input id="currentSubdivChange" class="divideShortcut" onchange="game.editor.confirmSubdivChange()" placeholder="-" type="number">
+                    </div>
+                </div>
+    
+                <div class="editorSection" id="songInfo" style="width: 325px">
+                    <div class="editorField">
+                        <p style="width: 70px">Song:</p> 
+                        <input id="songFilename" disabled placeholder="(no song)" onclick="$('#songUpload').click()"; onchange="//game.editor.setSongFilename() // nvm this is a bad idea" style="width: 151px">
+                        <button title="Song file" onclick="$('#songUpload').click()" style="background-image: url(./assets/load.svg);"></button>
+                        <button title="Chart settings" onclick="$('#chartSettings').show()" style="background-image: url(./assets/cog.svg);"></button>
+                    </div>
+    
+                    <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+                        <div class="editorField">
+                            <p style="width: 70px">BPM:</p> 
+                            <input id="startingBPM" class="bpmShortcut" onchange="game.editor.setStartBPM()" placeholder="100" type="number">
+                        </div>
+    
+                        <div class="editorField" style="margin-left: 20px">
+                            <p style="width: 70px">Offset:</p> 
+                            <input id="songOffset" onchange="game.editor.setOffset()" placeholder="0" type="number">
+                        </div>
+        
+                        <div class="editorField">
+                            <p style="width: 70px">Divide:</p> 
+                            <input id="startingSubdiv" class="divideShortcut" onchange="game.editor.setStartSubdiv()" placeholder="4" type="number">
+                        </div>
+    
+                        <div class="editorField" style="margin-left: 20px">
+                            <p style="width: 70px">Volume:</p> 
+                            <input id="startingVolume" onchange="game.editor.setStartVolume()" type="number">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div id="chart" class="chartVisible"></div>
+
+        <div class="chartHidden" style="display: none;">
+            <p style="font-size: 24px;"><b>Chart hidden!</b> Press E to unhide.</p>
+
+            <div id="gameplayStats">
+            </div>
+        </div>
+
+    </div>
+
+    <div id="chartSettings" class="popup" style="display: none">
+        <div class="popupBox" style="width: 650px">
+            <h1>Chart Settings</h1>
+            
+            <div class="chartSetting clapSetting" id="clapSound">
+                <p style="width: 140px">Hit sound: </p>
+                <select class="hitsoundList" onchange="game.conductor.setClapSound($(this).val(), undefined, false)"></select>
+                <input class="hitsoundVol" onchange="game.conductor.setClapSound(null, $(this).val(), false)" type="number"><p>%</p>
+                <button style="background-image: url(./assets/more.svg);" onclick="game.conductor.clapSound.sound.play()"></button>
+            </div>
+
+            <div class="chartSetting clapSetting" id="cpuClapSound">
+                <p style="width: 140px">CPU Hit sound: </p>
+                <select class="hitsoundList" onchange="game.conductor.setClapSound($(this).val(), undefined, true)"></select>
+                <input class="hitsoundVol" onchange="game.conductor.setClapSound(null, $(this).val(), true)" type="number"><p>%</p>
+                <button style="background-image: url(./assets/more.svg);" onclick="game.conductor.cpuClapSound.sound.play()"></button>
+            </div>
+
+            <div class="chartSetting">
+                <p style="margin-right: 10px;">Scroll speed multiplier: </p> <input id="scrollMultiplier" style="width: 45px" value="1" type="number" onchange="game.setScrollMultiplier($(this).val())">
+            </div>
+            
+            <p>Most hit sounds have been taken from <a href="https://rhythmdr.com/" target="_blank">Rhythm Doctor</a>. They are intended to be placeholders, so expect some to be removed/modified/replaced in the future.</p>
+
+            <button style="margin: 20px 0px 10px 0" class="textButton" onclick="$('.popup').hide()">Done</button>
+        </div>
+    </div>
+
+    
+    <div id="playerSettings" class="popup" style="display: none;">
+        <div class="popupBox" style="width: 600px;">
+            <h1>Settings</h1>
+
+            <div class="playerSetting">
+                <p>Player icon</p>
+                <button id="playerIcon" class="simpleFlex" style="background-color: var(--lightgrey); width: 32px; font-size: 20px;" onclick="$('.popup').hide(); $('#playerMenu').show()"></button>
+                <p class="settingInfo">Changes the player emoji that appears in the address bar</p>
+            </div>
+
+            <div class="playerSetting">
+                <p>Sound effects</p>
+                <label>
+                    <input type="checkbox" id="playSFX" onclick="PLAYERSETTINGS.soundEffects = $(this).prop('checked'); saveSettings()">
+                    <span></span>
+                </label>
+                <p class="settingInfo">Enable the playback of sound effects for hits, misses, etc</p>
+            </div>
+
+            <div class="playerSetting">
+                <p>Input offset</p>
+                <input value="0" id="inputOffset" type="number" style="width: 70px"> <p>ms</p>
+                <p class="settingInfo">Extra offset added when registering a key press (can be negative)<br>Lower this if you're hitting too early, and raise it if you're hitting too late</p>
+            </div>
+
+            <div class="playerSetting">
+                <p>Hit window</p>
+                <select id="hitWindowMultiplier" onchange="PLAYERSETTINGS.hitWindowMultiplier = $(this).val(); updateHitWindowPreview(); saveSettings()">
+                    <option value="0.25">Hardcore (x0.25)</option>
+                    <option value="0.5">Extra Tough (x0.5)</option>
+                    <option value="0.75">Tough (x0.75)</option>
+                    <option selected value="1">Normal</option>
+                    <option value="1.25">Casual (x1.25)</option>
+                    <option value="1.5">Lenient (x1.5)</option>
+                    <option value="2">Generous (x2.0)</option>
+                </select>
+                <p class="settingInfo">Adjusts the lenience of the hit window for notes. Current window is <b>±<span id="currentWindow">?</span> ms</b></p>
+            </div>
+
+            <div class="playerSetting">
+                <p>Control scheme</p>
+                <select id="controlSchemeSelector" onchange="changeControlScheme($(this).val())"></select>
+                <p class="settingInfo">Reduces the number of buttons required to play the game<br><span id="currentControlScheme"></span></p>
+            </div>
+
+            <button style="margin: 0px 0px 10px 0" class="textButton" onclick="$('.popup').hide()">Done</button>
+
+        </div>
+    </div>
+
+    <div id="playerMenu" class="popup" style="display: none;">
+        <div class="popupBox" style="width: 500px">
+            <h1 style="margin-bottom: 20px">Player Select</h1>
+            <div id="playerList" class="simpleFlex" style="width: 400px; flex-wrap: wrap;"></div>
+            <button style="margin: 20px 0px 10px 0" class="textButton" onclick="$('.popup').hide(); $('#playerSettings').show()">Back</button>
+        </div>
+    </div>
+
+    <div id="helpMenu" class="popup" style="display: none;">
+        <div class="popupBox" style="width: 1000px">
+            <h1 style="margin-bottom: 0px">URLX alpha</h1>
+            <p class="nobottom">URLX is a rhythm game played in your browser's address bar. Hit upcoming notes by pressing their respective arrows,<br>using the arrow keys and spacebar. Mobile is currently <b>not</b> supported.</p>
+            <p class="nobottom">Please note that this game is still in alpha! There is no proper way to play levels aside from through the editor.<br>More features will come soon! (scoring, difficulty modes, menus, etc)</p>
+
+            <p class="nobottom">Gameplay, design, and programming by <a href="https://twitter.com/TheRealGDColon" target="_blank">Colon</a> :</p>
+            <p class="nobottom" style="margin-top: 3px">Hit sounds from <a href="https://rhythmdr.com/" target="_blank">Rhythm Doctor</a>, emoji icons from <a href="https://github.com/twitter/twemoji" target="_blank">Twemoji</a></p>
+
+            <p class="nobottom">PunctuationAI LTD., <span id="currentYear">201x</span>. All Rights Reserved.</p>
+            <button style="margin: 20px 0px 10px 0" class="textButton" onclick="$('.popup').hide()">Close</button>
+        </div>
+    </div>
+
+    <div id="keyMenu" class="popup" style="display: none">
+        <div class="popupBox" style="padding-left: 20px; padding-right: 20px; width: 950px">
+            <h1>Controls and Hotkeys</h1>
+
+            <div style="max-height: 620px; overflow: auto; margin-bottom: 20px;">
+                <h3>Gameplay</h3>
+                <div class="keyExamples simpleFlex" style="flex-wrap: wrap;">
+                    <p>👈 Left</p>
+                    <p>👇 Down</p>
+                    <p>👆 Up</p>
+                    <p>👉 Right</p>
+                    <span></span>
+                    <p>👏 Space</p>
+                    <p>👊🏻 Any Arrow</p>
+                    <p>✌🏻 Space + Any Arrow</p>
+                    <span></span>
+                    <p>💣 Don't press</p>
+                    <p>🤙 Up + Down</p>
+                    <p>👐 Left + Right</p>
+                    <p>🡽 Up + Right, etc</p>
+                </div>
+    
+                <h3>Editor</h3>
+                <div class="keyExamples simpleFlex" style="flex-wrap: wrap;">
+                    <p><key>⮜</key> <key>⮟</key> <key>⮝</key> <key>⮞</key> <key>Space</key> Place note</p>
+                    <p><key>=</key> Place any arrow</p>
+                    <p><key>+</key> Place space + arrow</p>
+                    <p><key>X</key> Place bomb</p>
+                    <span></span>
+                    <p><key>Backspace</key> <key>Del</key> Remove note</p>
+                    <p><key>Right Click</key> Toggle CPU note</p>
+                    <span></span>
+                    <p><key>Enter</key> Playtest</p>
+                    <p><key>Enter</key> <key>Esc</key> <key>P</key> Stop playtest</p>
+                    <p><key>CTRL</key>+<key>(arrow)</key> Place note during playtest</p>
+                    <span></span>
+                    <p><key>A</key> Toggle autoplay</p>
+                    <p><key>M</key> Toggle metronome</p>
+                    <p><key>B</key> Set BPM</p>
+                    <p><key>D</key> Set division</p>
+                    <p><key>E</key> Show/hide chart</p>
+                    <span></span>
+                    <p><key>CTRL</key>+<key>S</key> Save</p>
+                    <p><key>CTRL</key>+<key>SHIFT</key>+<key>S</key> Export</p>
+                    <p><key>CTRL</key>+<key>O</key> Load</p>
+                </div>  
+    
+                <h3>Feedback</h3>
+                <div id="feedbackIcons" class="keyExamples simpleFlex" style="flex-wrap: wrap; width: 530px; margin: auto;"></div>
+            </div>
+
+            <button style="margin: 0px 0px 10px 0" class="textButton" onclick="$('.popup').hide()">Close</button>
+        </div>
+    </div>
+
+    <div id="mobileWarning" class="popup" style="display: none;">
+        <div class="popupBox" style="width: 400px;">
+            <h1>Mobile user spotted!</h1>
+            <p style="margin-top: 0px;">Unfortunately, URLX does not have proper support for mobile yet. This is something I hope to pull off later in development, but for now all you'll be able to do is look around the editor UI. Oh well.</p>
+            <button style="margin: 20px 0px 10px 0" class="textButton" onclick="$('.popup').hide()">😔</button>
+        </div>
+    </div>
+
+    <div id="uploadPopup" class="popup" style="display: none;">
+        <div class="popupBox uploadBox">
+            <h1 style="margin-bottom: 60px;">Load Chart</h1>
+            
+            <div style="display: flex">
+                <div class="uploadOption">
+                    <div class="chartBox" onclick="game.selfdestruct(); game = new Game(); $('.popup').hide();">
+                        <img src="./assets/file_new.svg">
+                    </div>
+                    <p class="loadFrom">Blank Chart</p>
+                    <p class="loadInfo">Loads a blank chart with no song.</p>
+                </div>
+    
+                <div class="uploadOption usesFilesystem">
+                    <div class="chartBox" onclick="loadFromFolder()">
+                        <img src="./assets/file_folder.svg">
+                    </div>
+                    <p class="loadFrom">Folder</p>
+                    <p class="loadInfo">Loads a chart from a folder containing both a song and a .urlx chart for it.</p>
+                    <p class="loadExtra">(fastest and most convenient, but only supported by modern browsers)</p>
+                </div>
+    
+                <div class="uploadOption">
+                    <div id="zipUpload" class="dragBox chartBox" onclick="$('#chartFile').click()">
+                        <img src="./assets/file_zip.svg">
+                    </div>
+                    <p class="loadFrom">Zip File</p>
+                    <p class="loadInfo">Loads a chart from a compressed .urlzip file.</p>
+                    <p class="loadExtra">(supported by most browsers, but very slow since the song is zipped every time you save)</p>
+                </div>
+            </div>
+
+            <div class="simpleFlex" style="cursor: pointer" onclick="$('.popup').hide(); $('#gameImport').show();">
+                <button class="ourple" style="background-size: 75%; background-image: url(./assets/headphones.svg);"></button>
+                <p style="margin: 0px 0px;">Load from Rhythm Game (experimental)</p>
+            </div>
+
+            <input type="file" style="display: none;" id="chartFile" accept=".zip,.urlzip">
+            <input type="file" style="display: none;" id="songUpload" accept="audio/*">
+
+        </div>
+    </div>
+
+    <div id="gameImport" class="popup" style="display: none;">
+        <div class="popupBox">
+            <h1>Game Import</h1>
+            <p style="margin-top: 0px; margin-bottom: 22px;">Import a chart from another rhythm game with a level editor that's hopefully more polished. Expect bugs!</p>
+
+            <div id="importableGames" class="gameList"></div>
+
+            <p>More games coming soon™ (maybe)</p>
+
+        </div>
+    </div>
+
+    <div class="popup importantPopup" id="gameImportConfig" style="display: none">
+        <div class="popupBox" style="width: 625px">
+            <h1 style="margin-bottom: 0px"><span id="gameImportName">Amogus</span> import</h1>
+            <p style="margin-top: 8px">Selected file: <span style="font-weight: bold;" id="gameImportFile">this ratio</span></p>
+
+            <p id="gameImportInfo" style="margin-top: 0px">hey all, scott here</p>
+
+            <div id="gameImportSettings"></div>
+
+            <div class="simpleFlex">
+                <button class="ourple" style="background-image: url(./assets/load.svg);" onclick="$('#gameImportSong').click()"></button>
+                <p id="gameImportSongName" default="Song file (optional)"></p>
+            </div>
+
+            <div class="simpleFlex" style="margin: 15px 0px; width: 310px; justify-content: space-between">
+                <button id="exportBtn" class="textButton" onclick="confirmGameImport()">Import!</button>
+                <button id="exportBtn" class="textButton" style="background-color: var(--lightgrey);" onclick="$('#gameImportConfig').hide()">Cancel</button>
+            </div>
+
+            <input type="file" style="display: none;" id="gameImportSong" accept="audio/*">
+        </div>
+    </div>
+
+    <div id="loadingMenu" class="importantPopup popup" style="display: none;">
+        <h1>Loading...</h1>
+    </div>
+
+</body>
+</html>
+<script type="text/javascript" src="./libraries/jquery.js"></script>
+<script type="text/javascript" src="./libraries/howler.js"></script>
+<script type="text/javascript" src="./libraries/jszip.js"></script>
+<script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="./scripts/miscfunctions.js"></script>
+<script type="text/javascript" src="./scripts/config.js"></script>
+<script type="text/javascript" src="./scripts/inputhandler.js"></script>
+<script type="text/javascript" src="./scripts/fileupload.js"></script>
+<script type="text/javascript" src="./scripts/gameimport.js"></script>
+
+<script type="text/javascript" src="./classes/Conductor.js"></script>
+<script type="text/javascript" src="./classes/Editor.js"></script>
+<script type="text/javascript" src="./classes/Game.js"></script>
+<script type="text/javascript" src="./classes/Note.js"></script>
+
+<script>
+
+    // empty address bar
+    window.location.hash = ""
+
+    //==========================================//
+
+    // empty chart
+    let game = new Game();
+
+    // popup closing
+    $(document).on('click', '.popup:not(.importantPopup)', function(e) { if ($(e.target).is('.popup')) $('.popup').hide() } );
+
+</script>
