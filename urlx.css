@@ -318,6 +318,12 @@ hr {
     overflow: hidden;
 }
 
+.sideFields {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
 input, button, select {
     height: 32px;
     margin: 0px 10px 0px 0px;
@@ -559,6 +565,7 @@ input::-webkit-inner-spin-button, input::-webkit-outer-spin-button {
     margin: 6px 7px;
     border: 1px solid white;
     border-radius: 5px;
+    vertical-align: middle;
 }
 
 .keyExamples key {
@@ -573,6 +580,12 @@ input::-webkit-inner-spin-button, input::-webkit-outer-spin-button {
 
 .keyExamples span {
     width: 100%;
+}
+
+.keyExamples .emoji {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
 }
 
 .ourple {
@@ -594,6 +607,10 @@ input::-webkit-inner-spin-button, input::-webkit-outer-spin-button {
 
 .unsupported * {
     cursor: not-allowed !important;
+}
+
+.greyBG {
+    background-color: var(--lightgrey);
 }
 
 @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }

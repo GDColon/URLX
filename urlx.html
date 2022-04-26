@@ -111,10 +111,10 @@
                     </div>
                 </div>
     
-                <div class="editorSection" id="noteInfo" style="width: 325px; display: none">
+                <div class="editorSection" id="noteInfo" style="width: 325px; display: none;">
                     <div class="editorField">
                         <p style="width: 70px">Note:</p> 
-                        <select id="currentArrow" onchange="game.editor.setNote($(this).val(), game.editor.selectedBeat)">
+                        <select id="currentArrow" style="width: 151px;" onchange="game.editor.setNote($(this).val(), game.editor.selectedBeat)">
                             <option value="-">(empty)</option>
                             <option value="o">Space</option>
                             <option value="<">Left</option>
@@ -131,19 +131,27 @@
                             <option value="<>">Left+Right</option>
                             <option value="x">Bomb</option>
                         </select>
+                        <button id="cpuButton" onclick="game.editor.toggleCPU()" style="background-image: url(./assets/cpu.svg);"></button>
                         <button onclick="$('#chartSettings').show()" style="background-image: url(./assets/cog.svg);"></button>
 
                     </div>
     
-                    <div class="editorField">
-                        <p style="width: 70px">BPM:</p> 
-                        <input id="currentBPMChange" class="bpmShortcut" onchange="game.editor.confirmBPMChange()" placeholder="-" type="number">
+                    <div class="sidefields">
+                        <div class="editorField">
+                            <p style="width: 70px">BPM:</p> 
+                            <input id="currentBPMChange" class="bpmShortcut" onchange="game.editor.confirmBPMChange()" placeholder="-" type="number">
+                        </div>
+        
+                        <div class="editorField" style="margin-left: 20px">
+                            <p style="width: 70px">Divide:</p> 
+                            <input id="currentSubdivChange" class="divideShortcut" onchange="game.editor.confirmSubdivChange()" placeholder="-" type="number">
+                        </div>
                     </div>
-    
-                    <div class="editorField">
-                        <p style="width: 70px">Divide:</p> 
-                        <input id="currentSubdivChange" class="divideShortcut" onchange="game.editor.confirmSubdivChange()" placeholder="-" type="number">
+
+                    <div style="text-align: right">
+                        <button class="textButton" style="height: 32px" onclick="game.editor.deselect()">Song settings</button>
                     </div>
+
                 </div>
     
                 <div class="editorSection" id="songInfo" style="width: 325px">
@@ -154,20 +162,20 @@
                         <button title="Chart settings" onclick="$('#chartSettings').show()" style="background-image: url(./assets/cog.svg);"></button>
                     </div>
     
-                    <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+                    <div class="sideFields">
                         <div class="editorField">
                             <p style="width: 70px">BPM:</p> 
                             <input id="startingBPM" class="bpmShortcut" onchange="game.editor.setStartBPM()" placeholder="100" type="number">
                         </div>
-    
-                        <div class="editorField" style="margin-left: 20px">
-                            <p style="width: 70px">Offset:</p> 
-                            <input id="songOffset" onchange="game.editor.setOffset()" placeholder="0" type="number">
-                        </div>
         
-                        <div class="editorField">
+                        <div class="editorField" style="margin-left: 20px">
                             <p style="width: 70px">Divide:</p> 
                             <input id="startingSubdiv" class="divideShortcut" onchange="game.editor.setStartSubdiv()" placeholder="4" type="number">
+                        </div>
+
+                        <div class="editorField">
+                            <p style="width: 70px">Offset:</p> 
+                            <input id="songOffset" onchange="game.editor.setOffset()" placeholder="0" type="number">
                         </div>
     
                         <div class="editorField" style="margin-left: 20px">
@@ -302,12 +310,12 @@
             <div style="max-height: 620px; overflow: auto; margin-bottom: 20px;">
                 <h3>Gameplay</h3>
                 <div class="keyExamples simpleFlex" style="flex-wrap: wrap;">
-                    <p>👈 Left</p>
-                    <p>👇 Down</p>
-                    <p>👆 Up</p>
-                    <p>👉 Right</p>
+                    <p>Left</p>
+                    <p>Down</p>
+                    <p>Up</p>
+                    <p>Right</p>
                     <span></span>
-                    <p>👏 Space</p>
+                    <p>👏 Space/Period/Comma</p>
                     <p>👊🏻 Any Arrow</p>
                     <p>✌🏻 Space + Any Arrow</p>
                     <span></span>

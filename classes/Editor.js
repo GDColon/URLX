@@ -130,6 +130,9 @@ class Editor {
         $('#currentBeat').html(subdiv == 1 ? roundBeat : `${roundBeat} + (${Math.round((beat - roundBeat) * subdiv)}/${subdiv})`)
         $('#currentTime').html(timestamp(this.game.conductor.getSecsFromBeat(beat)))
 
+        if (foundArrow && foundArrow.auto) $('#cpuButton').addClass("greyBG")
+        else $('#cpuButton').removeClass("greyBG")
+
         $('#noteInfo').show()
         $('#songInfo').hide()
     }
@@ -144,8 +147,17 @@ class Editor {
     }
 
     deselect() {
+        $('.selected').removeClass('selected')
         this.selectedBeat = 0
         if (!this.game.active) this.displayBeat(0) 
+    }
+
+    toggleCPU(beat) {
+        beat = Number(beat)
+        if (!beat) beat = this.selectedBeat
+        this.game.notes.filter(x => !x.isBomb() && x.beat == beat).forEach(x => x.auto = !x.auto)
+        this.updateBeat(beat)
+        this.displayBeat(beat)
     }
 
     confirmBPMChange() {
@@ -327,8 +339,7 @@ $(document).on('click', '.note', function () {
 $(document).on('contextmenu', '.note', function (e) { 
     e.preventDefault()
     let beatNum = +$(this).attr('beat')
-    game.notes.filter(x => !x.isBomb() && x.beat == beatNum).forEach(x => x.auto = !x.auto)
-    game.editor.updateBeat(beatNum)
+    game.editor.toggleCPU(beatNum)
 })
 
 // toggle ui

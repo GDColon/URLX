@@ -479,9 +479,10 @@ function importGameChart(providedSong={}) {
 
         case "sm":
             let smChart = gameChart.chart
-            let bpmChanges = smChart.match(/^#BPMS:(.+?);?$/m)[1]
+            let bpmChanges = smChart.match(/#BPMS:((.|\n)+?);/)[1]
             if (!bpmChanges) throw new Error("No BPM!")
-            bpmChanges = bpmChanges.split(",").map(x => x.split("=")).map(n => ({beat: +n[0], bpm: +n[1]}))
+            console.log(bpmChanges)
+            bpmChanges = bpmChanges.replace(/\s/g, "").split(",").map(x => x.split("=")).map(n => ({beat: +n[0], bpm: +n[1]}))
             bpmChanges.forEach(x => {
                 if (x.beat > 0) chart.actions.push({ "beat": x.beat, "type": "bpm", "val": x.bpm })
             })
@@ -500,7 +501,6 @@ function importGameChart(providedSong={}) {
             else noteInfo = noteInfo.split(":")
 
             let noteData = noteInfo[noteInfo.length - 1].split(",").map(x => x.split("\n").map(x => x.trim()).filter(x => x.length > 2 && !x.startsWith("//")))
-            console.log(noteData)
             
             noteData.forEach((m, measureNumber) => {
                 let totalNotes = m.length
