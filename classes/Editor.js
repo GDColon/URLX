@@ -230,7 +230,7 @@ class Editor {
 
     setSong(songData) {
         let reader = new FileReader()
-        reader.onload = async function() { game.conductor.setSong(reader.result, songData.name) }
+        reader.onload = async function() { game.conductor.setSong(reader.result.replace("data:video", "data:audo"), songData.name) }
         reader.readAsDataURL(songData)
         this.drawChart()
     }

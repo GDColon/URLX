@@ -46,7 +46,9 @@ class Conductor {
             loop: false,
             onload: () => { this.game.editor.ready() },
             onend: () => { this.game.finish() },
-            onplay: () => { this.game.musicstart() }
+            onplay: () => { this.game.musicstart() },
+            onloaderror: (id, err) => { console.log(err); alert(`Error while loading song! ${!browserDoesntSuck ? "Your current browser lacks lots of modern features, maybe try switching?" : ""}\n` + err) },
+            onplayerror : (id, err) => { console.log(err); alert(`Error while playing song! ${!browserDoesntSuck ? "Your current browser lacks lots of modern features, maybe try switching?" : ""}\n` + err) }
         });
         this.noSong = !songData
         this.filename = songFilename || ""

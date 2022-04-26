@@ -219,7 +219,7 @@ function confirmGameImport() {
     if (!songFile) importGameChart()
     else {
         let songReader = new FileReader()
-        songReader.onload = function() { importGameChart({data: songReader.result, name: songFile.name}) }
+        songReader.onload = function() { importGameChart({data: songReader.result.replace("data:video", "data:audo"), name: songFile.name}) }
         songReader.readAsDataURL(songFile)
     }
 }

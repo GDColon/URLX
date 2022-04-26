@@ -100,7 +100,7 @@ function loadFromFolder() {
                 let songData = await foundSong.getFile()
                 let songReader = new FileReader()
                 songReader.onload = async function() {
-                    game = newGame(chartJSON, songReader.result, chartDir)
+                    game = newGame(chartJSON, songReader.result.replace("data:video", "data:audo"), chartDir)
                 }
                 songReader.readAsDataURL(songData)
             }
