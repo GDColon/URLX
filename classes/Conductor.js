@@ -140,7 +140,7 @@ class Conductor {
 
     // updates the second position for actions
     updateActionSecs() {
-        this.game.notes.concat(this.game.actions).forEach(x => x.secs = this.getSecsFromBeat(x.beat))
+        this.game.notes.forEach(x => x.secs = this.getSecsFromBeat(x.beat))
     }
 
     // adds a new bpm change and recalculates

@@ -346,6 +346,7 @@ function importGameChart(providedSong={}) {
 
                 function addRDNote(pos, pulse) {
                     let isPulse = (pulse !== undefined && pulse < 6)
+                    if (isPulse && pulse >= 0 && checkSilentBeat(x.row, pos, pulse)) return
                     let playerBeat = checkPlayerBeat(x.row, pos)
                     let noteType = (chartSettings.twoPlayer && playerBeat == "P2") ? "+" : "o"
                     let isCPUHit = playerBeat == "CPU" || (chartSettings.cpupulses && isPulse)
