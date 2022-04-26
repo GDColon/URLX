@@ -96,8 +96,8 @@ const PLAYERSETTINGS = {
     player: currentSettings.player || defaultPlayer[0], // neutral emoji
     playerHappy: currentSettings.playerHappy || defaultPlayer[1], // hit emoji
     playerMissed: currentSettings.playerMissed || defaultPlayer[2], // miss emoji
-    soundEffects: (currentSettings.soundEffects !== false), // play sound effects?
-    skipWelcome: (currentSettings.skipWelcome !== false), // skip welcome message
+    soundEffects: (currentSettings.soundEffects !== false), // play sound effects? (default true)
+    skipWelcome: (currentSettings.skipWelcome === true), // skip welcome message (default false)
     inputOffset: Number(currentSettings.inputOffset) || 0, // input offset, lower if hitting too early and raise if hitting too late
     hitWindowMultiplier: Number(currentSettings.hitWindowMultiplier) || 1, // hit window multiplier, higher = more lenient
     controlScheme: currentSettings.controlScheme || "normal" // control scheme, determines how many buttons are required to play
