@@ -41,7 +41,7 @@ class Conductor {
 
     setSong(songData, songFilename) { // change song
         this.music = new Howl({
-            src: [songData || "/sfx/empty.ogg"],
+            src: [songData || "sfx/empty.ogg"],
             volume: 0.75,
             loop: false,
             onload: () => { this.game.editor.ready() },
@@ -65,7 +65,7 @@ class Conductor {
         $(`#${clapType}`).find("input").val(vol)
         if (!clapFilename && currentClap) return currentClap.sound.volume(vol / 100)
         let foundClap = CLAPS.find(x => x.file == clapFilename) || CLAPS.find(x => cpuSound ? x.cpuDefault : x.default)
-        this[clapType] = { data: foundClap, sound: new Howl({src: [`/claps/${foundClap.file}.ogg`], volume: vol / 100, loop: false }) } 
+        this[clapType] = { data: foundClap, sound: new Howl({src: [`claps/${foundClap.file}.ogg`], volume: vol / 100, loop: false }) } 
         $(`#${clapType}`).find("select").val(foundClap.file)
     }
 
