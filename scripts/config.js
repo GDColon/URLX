@@ -97,6 +97,7 @@ const PLAYERSETTINGS = {
     playerHappy: currentSettings.playerHappy || defaultPlayer[1], // hit emoji
     playerMissed: currentSettings.playerMissed || defaultPlayer[2], // miss emoji
     soundEffects: (currentSettings.soundEffects !== false), // play sound effects?
+    skipWelcome: (currentSettings.skipWelcome !== false), // skip welcome message
     inputOffset: Number(currentSettings.inputOffset) || 0, // input offset, lower if hitting too early and raise if hitting too late
     hitWindowMultiplier: Number(currentSettings.hitWindowMultiplier) || 1, // hit window multiplier, higher = more lenient
     controlScheme: currentSettings.controlScheme || "normal" // control scheme, determines how many buttons are required to play
@@ -107,6 +108,9 @@ function saveSettings() {
     localStorage.urlx = JSON.stringify(PLAYERSETTINGS)
 }
 
+// welcome message
+if (!PLAYERSETTINGS.skipWelcome) $('#welcome').show()
+
 // list of players
 $('#playerList').html(PLAYERS.map(x => `<button class="playerOption" neutral="${x[0]}" happy="${x[1]}" sad="${x[2]}">${twemojiParse(x[0])}</button>`))
 
@@ -116,6 +120,7 @@ $('#controlSchemeSelector').html(Object.entries(CONTROLSCHEMES).map(x => `<optio
 // settings menu
 $('#playerIcon').html(twemojiParse(PLAYERSETTINGS.player))
 $('#playSFX').prop('checked', PLAYERSETTINGS.soundEffects)
+$('#skipWelcome').prop('checked', PLAYERSETTINGS.skipWelcome)
 $('#inputOffset').val(PLAYERSETTINGS.inputOffset)
 $('#hitWindowMultiplier').val(PLAYERSETTINGS.hitWindowMultiplier)
 

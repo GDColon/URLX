@@ -386,6 +386,12 @@ label input[type=checkbox] + span {
     background-image: url(./assets/check_off.svg);
 }
 
+label input[type=checkbox] + span.noX {
+    background-color: var(--lightgrey);
+    border-radius: 3px;
+    background-image: none;
+}
+
 label input[type=checkbox]:checked + span {
     background-image: url(./assets/check_on.svg);
 }

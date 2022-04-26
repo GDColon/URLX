@@ -10,7 +10,7 @@
     <meta property="og:description" content="A rhythm game played in your browser's address bar. (currently in alpha)">
     <meta property="og:type" content="website">
     <title>URLX alpha</title>
-    <link href="./urlx.css" type="text/css" rel="stylesheet">
+    <link href="./urlx.css?v=a" type="text/css" rel="stylesheet">
     <link rel="icon" href="./assets/link.svg"></link>
 </head>
 <body>
@@ -299,7 +299,12 @@
             </p>
 
             <p class="nobottom">PunctuationAI LTD., <span id="currentYear">201x</span>. All Rights Reserved.</p>
-            <button style="margin: 20px 0px 10px 0" class="textButton" onclick="$('.popup').hide()">Close</button>
+
+            <div style="margin: 20px 0px 10px 0">
+                <button style="width: 180px; background-color: var(--emojipurple); margin-right: 20px" class="textButton" onclick="$('.popup').hide(); $('#welcome').show()">Welcome Screen</button>
+                <button class="textButton" onclick="$('.popup').hide()">Close</button>
+            </div>
+
         </div>
     </div>
 
@@ -310,10 +315,10 @@
             <div style="max-height: 620px; overflow: auto; margin-bottom: 20px;">
                 <h3>Gameplay</h3>
                 <div class="keyExamples simpleFlex" style="flex-wrap: wrap;">
-                    <p>Left</p>
-                    <p>Down</p>
-                    <p>Up</p>
-                    <p>Right</p>
+                    <p>👈 Left</p>
+                    <p>👇 Down</p>
+                    <p>👆 Up</p>
+                    <p>👉 Right</p>
                     <span></span>
                     <p>👏 Space/Period/Comma</p>
                     <p>👊🏻 Any Arrow</p>
@@ -355,6 +360,32 @@
             </div>
 
             <button style="margin: 0px 0px 10px 0" class="textButton" onclick="$('.popup').hide()">Close</button>
+        </div>
+    </div>
+
+    <div id="welcome" class="popup" style="display: none;">
+        <div class="popupBox" style="width: 640px;">
+            <h1>Welcome to URLX!</h1>
+            <p style="margin-top: 0px;">URLX is a rhythm game playable in your browser's address bar! (look up)</p>
+            <p>It works similarly to most rhythm games, where arrows scroll by on the address bar and you have to press their respective key. Some notes may require you to press the spacebar, or multiple buttons at once.</p>
+
+            <p><b>Please note that this game is still in early alpha!</b> Only the editor is released as of right now, proper menus and gameplay modes will come later.</p>
+            <p>To make a chart, click on a square in the editor and then press an arrow key (or space) to place a note. Each rectangle represents one beat, and you can adjust the amount of squares they are subdivided into. You can also place notes in real time while playing the chart, by pressing arrows while holding CTRL.</p>
+            <p>If you have any feedback, suggestions, bug reports, or even charts, I encourage you to share them with me on <a target="_blank" href="https://twitter.com/TheRealGDColon">Twitter</a>.</p>
+            
+            <div class="simpleFlex">
+                <label>
+                    <input type="checkbox" id="skipWelcome" onclick="PLAYERSETTINGS.skipWelcome = $(this).prop('checked'); saveSettings()">">
+                    <span class="noX"></span>
+                </label>
+                <p>Don't show this again (viewable in the help menu)</p>
+            </div>
+
+            <div style="margin-top: 10px; margin-bottom: 20px">
+                <button class="textButton" onclick="$('.popup').hide(); $('#uploadPopup').show()">Load Chart</button>
+                <button class="textButton" style="margin: 0px 20px; background-color: var(--emojipurple)" onclick="$('.popup').hide()">Close</button>
+                <button class="textButton" onclick="$('.popup').hide(); $('#keyMenu').show()">Controls</button>
+            </div>
         </div>
     </div>
 
@@ -455,16 +486,16 @@
 <script type="text/javascript" src="./libraries/jszip.js"></script>
 <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
 
-<script type="text/javascript" src="./scripts/miscfunctions.js"></script>
-<script type="text/javascript" src="./scripts/config.js"></script>
-<script type="text/javascript" src="./scripts/inputhandler.js"></script>
-<script type="text/javascript" src="./scripts/fileupload.js"></script>
-<script type="text/javascript" src="./scripts/gameimport.js"></script>
+<script type="text/javascript" src="./scripts/miscfunctions.js?v=a"></script>
+<script type="text/javascript" src="./scripts/config.js?v=a"></script>
+<script type="text/javascript" src="./scripts/inputhandler.js?v=a"></script>
+<script type="text/javascript" src="./scripts/fileupload.js?v=a"></script>
+<script type="text/javascript" src="./scripts/gameimport.js?v=a"></script>
 
-<script type="text/javascript" src="./classes/Conductor.js"></script>
-<script type="text/javascript" src="./classes/Editor.js"></script>
-<script type="text/javascript" src="./classes/Game.js"></script>
-<script type="text/javascript" src="./classes/Note.js"></script>
+<script type="text/javascript" src="./classes/Conductor.js?v=a"></script>
+<script type="text/javascript" src="./classes/Editor.js?v=a"></script>
+<script type="text/javascript" src="./classes/Game.js?v=a"></script>
+<script type="text/javascript" src="./classes/Note.js?v=a"></script>
 
 <script>
 

@@ -356,7 +356,10 @@ $('#currentYear').text(new Date().getFullYear())
 
 // mobile
 let mobile = ( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) 
-if (mobile) $('#mobileWarning').show()
+if (mobile) {
+    $('#welcome').hide()
+    $('#mobileWarning').show()
+}
 
 // hitsound list
 let hitsoundOptions = CLAPS.map(x => `<option value="${x.file}">${x.name}</option>`).join("")
