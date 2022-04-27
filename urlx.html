@@ -3,7 +3,6 @@
 <head>
     <meta name="theme-color" content="#3B88C3">
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-135255146-1"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
     <script>window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'UA-135255146-1');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -417,9 +416,9 @@
                     <div id="zipUpload" class="dragBox chartBox" onclick="$('#chartFile').click()">
                         <img src="./assets/file_zip.svg">
                     </div>
-                    <p class="loadFrom">Zip File</p>
-                    <p class="loadInfo">Loads a chart from a compressed .urlzip file.</p>
-                    <p class="loadExtra">(supported by most browsers, but very slow since the song is zipped every time you save)</p>
+                    <p class="loadFrom">File</p>
+                    <p class="loadInfo">Loads a chart from a compressed .urlzip file or a .urlx chart with no song.</p>
+                    <p class="loadExtra">(supported by most browsers, but slower since the song and chart need to be unzipped)</p>
                 </div>
             </div>
 
@@ -428,7 +427,7 @@
                 <p style="margin: 0px 0px;">Load from Rhythm Game (experimental)</p>
             </div>
 
-            <input type="file" style="display: none;" id="chartFile" accept=".zip,.urlzip">
+            <input type="file" style="display: none;" id="chartFile" accept=".zip,.urlzip,.urlx">
             <input type="file" style="display: none;" id="songUpload" accept="audio/*">
 
         </div>

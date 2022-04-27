@@ -152,6 +152,7 @@ hr {
 .uploadOption .loadExtra {
     opacity: 75%;
     line-height: 26px;
+    margin-top: 0px;
 }
 
 .selectedChartType {

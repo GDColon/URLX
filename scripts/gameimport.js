@@ -5,7 +5,7 @@ let gameImportData = [
         hover: "Samurai.",
         filestring: ".rdlevel file",
         filetypes: [".rdlevel"],
-        details: "All 'hits' in the level will be charted as spacebar presses. Beatsounds are ignored.",
+        details: "All 'hits' in the level will be charted as spacebar presses.",
         settings: [
             {
                 name: "Also chart oneshot pulses (oneshot rows)",
@@ -171,7 +171,7 @@ function validGameChart(game, chart, filename, settings={}) {
 
 function invalidGameChart(error) {
     $('#loadingMenu').hide()
-    alert("Error! " + error)
+    alert("Error!\n" + error)
 }
 
 // validate if it's actually a chart for that game (wip)
@@ -219,7 +219,7 @@ function confirmGameImport() {
     if (!songFile) importGameChart()
     else {
         let songReader = new FileReader()
-        songReader.onload = function() { importGameChart({data: songReader.result.replace("data:video", "data:audo"), name: songFile.name}) }
+        songReader.onload = function() { importGameChart({data: songReader.result.replace("data:video", "data:audio"), name: songFile.name}) }
         songReader.readAsDataURL(songFile)
     }
 }
