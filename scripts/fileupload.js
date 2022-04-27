@@ -32,33 +32,27 @@ $('#zipUpload').on('drop', function(e){
     }
 });
 
-function progress(msg) {
-    $('#loadingStatus').text(msg)
-    // console.log(msg)
-}
-
 function oopsie(err) {
-    alert("Error!")
-    progress("Error!")
+    alert("Error!\n" + err)
     console.error(err)
 }
 
 function loadFromZip(zipFile) {
-    progress("Unzipping...")
+    if (zipFile.name.toLowerCase().endsWith(".urlx") || zipFile.name.toLowerCase().endsWith(".json")) return loadFromJSON(zipFile)
     $("#uploadPopup").hide()
     $("#loadingMenu").show()
     JSZip.loadAsync(zipFile).then(zip => {
-        progress("Preparing JSON...")
         let foundChart = zip.file(/.+\.(json|urlx)/gi)
         if (!foundChart.length) return oopsie("No JSON")
         else foundChart[0].async("string").then(json => {
             try {
                 json = JSON.parse(json)
                 let foundSong = zip.file(json.metadata.filename)
-                progress("Preparing music...")
-                if (!foundSong) return oopsie("No song")
+                if (!foundSong) {
+                    game = newGame(json)
+                    $('.popup').hide()
+                }
                 else foundSong.async("base64").then(song => {
-                    progress("Loading music...")
                     let dataURL = `data:audio/ogg;base64,${song}`
                     game = newGame(json, dataURL)
                     $('.popup').hide()
@@ -67,9 +61,20 @@ function loadFromZip(zipFile) {
             catch(e) { return oopsie(err) }
         })
 
-    }).catch(err => {
-        oopsie(err)
-    })
+    }).catch(err => { oopsie(err) })
+}
+
+function loadFromJSON(file) {
+    let reader = new FileReader()
+    reader.onload = async function() {
+        try {
+            let json = JSON.parse(reader.result)
+            game = newGame(json)
+            $('.popup').hide()
+        }
+        catch(err) { oopsie(err) }
+    }
+    reader.readAsText(file)
 }
 
 function loadFromFolder() {
@@ -100,7 +105,7 @@ function loadFromFolder() {
                 let songData = await foundSong.getFile()
                 let songReader = new FileReader()
                 songReader.onload = async function() {
-                    game = newGame(chartJSON, songReader.result.replace("data:video", "data:audo"), chartDir)
+                    game = newGame(chartJSON, songReader.result.replace("data:video", "data:audio"), chartDir)
                 }
                 songReader.readAsDataURL(songData)
             }

@@ -187,7 +187,7 @@ class Editor {
             this.game.conductor.organizeBPMChanges()
             this.drawChart()
         }
-        this.conductor.updateActionSecs()
+        this.game.conductor.updateActionSecs()
         this.updateSongInfo()
     }
 
@@ -230,7 +230,7 @@ class Editor {
 
     setSong(songData) {
         let reader = new FileReader()
-        reader.onload = async function() { game.conductor.setSong(reader.result.replace("data:video", "data:audo"), songData.name) }
+        reader.onload = async function() { game.conductor.setSong(reader.result.replace("data:video", "data:audio"), songData.name) }
         reader.readAsDataURL(songData)
         this.drawChart()
     }
