@@ -45,7 +45,7 @@ function toSafe(beat, divide=1) {
 }
 
 // timestamp display - https://gist.github.com/vankasteelj/74ab7793133f4b257ea3
-function pad(num, size) { return ('000' + num).slice(size * -1); }
+function pad(num, size) { return num.toString().padStart(size, "0") }
 function timestamp(timeInSeconds) {
     time = Math.max(0, parseFloat(timeInSeconds)).toFixed(3),
     minutes = Math.floor(time / 60) % 60,
