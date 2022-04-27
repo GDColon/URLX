@@ -76,12 +76,14 @@ class Editor {
     }
     
     scrollToBeat(beat) {
+        if (!chartVisible) return;
         let foundElement = $(`.beat[num="${Math.floor(beat)}"]`)
         if (!foundElement.length) return
         $('#chart').scrollTop($('#chart').scrollTop() + foundElement.offset().top - (foundElement.height() * 7))
     }
 
     highlightBeat(beat) {
+        if (!chartVisible) return;
         $('.highlighted').removeClass('highlighted')
         $(`.beat[num="${Math.floor(beat)}"]`).addClass('highlighted')
         $(`.note[beat="${this.game.conductor.roundToSubdiv(beat)}"]`).addClass('highlighted')
@@ -98,7 +100,7 @@ class Editor {
         $('#currentSpeed').html(this.game.conductor.speed.toFixed(1))
     }
 
-    displayBeat(beat) {
+    displayBeat(beat) {       
         if (!beat) {
             $('#currentBeat').html("-")
             $('#currentTime').html("-")
