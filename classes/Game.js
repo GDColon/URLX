@@ -266,7 +266,11 @@ class Game {
                 bpm: this.conductor.bpmChanges[0].bpm,
                 subdivision: this.conductor.subdivisionChanges[0].subdivision,
             },
-            notes: this.notes.map(x => ({beat: x.beat, arrow: x.arrow})),
+            notes: this.notes.map(x => {
+                let noteObj = {beat: x.beat, arrow: x.arrow}
+                if (x.auto) noteObj.auto = true
+                return noteObj
+            }),
             actions: gameActions.sort((a, b) => a.beat - b.beat)
         }
 
