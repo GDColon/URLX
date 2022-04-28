@@ -181,7 +181,7 @@ function validateGameChart(data) {
     let reader = new FileReader()
 
     reader.onload = function() {
-        let chartData = reader.result.replace(/\r/g, "") // remove return chars
+        let chartData = reader.result.replace(/(\r|\0)/g, "") // remove return chars and null chars
         switch (data.game) {
             case "rd":
                 // remove trailing commas from rdlevel file
