@@ -277,12 +277,18 @@ hr {
     bottom: 0%;
 }
 
-.note .emoji {
+.note .emoji, .note .emoji p {
+    display: flex;
     pointer-events: none;
+    justify-content: center;
+    align-items: center;
+    font-size: calc(var(--gridSize) * 0.6);
 }
 
-.note .emoji p {
-    font-size: calc(var(--gridSize) * 0.6);
+.note .emoji .twemoji {
+    width: 70%;
+    height: 70%;
+    filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.33))
 }
 
 #editorButtons {
@@ -567,30 +573,47 @@ input::-webkit-inner-spin-button, input::-webkit-outer-spin-button {
 }
 
 .keyExamples p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #1a1a1a;
     white-space: nowrap;
     padding: 5px 7px;
     margin: 6px 7px;
     border: 1px solid white;
     border-radius: 5px;
-    vertical-align: middle;
+    height: 30px;
+}
+
+.keyExamples .twemoji {
+    width: 20px;
+    height: 20px;
+    margin-right: 6px;
 }
 
 .keyExamples key {
+    height: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: default;
     background-color: black;
     font-size: 16px;
     border: 1px solid #aaaaaa;
     border-radius: 3px;
-    padding: 2px 4px;
-    margin: 0px 2px;
+    padding: 0px 4px;
+    margin: 0px 2.5px;
+}
+
+.keyExamples key:last-child {
+    margin-right: 5px;
 }
 
 .keyExamples span {
     width: 100%;
 }
 
-.keyExamples .emoji {
+.keyExamples .tweemoji {
     width: 24px;
     height: 24px;
     vertical-align: middle;

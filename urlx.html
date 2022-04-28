@@ -11,7 +11,7 @@
     <meta property="og:type" content="website">
     <meta name="og:image" itemprop="image" content="https://gdcolon.com/urlx/assets/link.png">
     <title>URLX alpha</title>
-    <link href="./urlx.css?v=2" type="text/css" rel="stylesheet">
+    <link href="./urlx.css?v=3" type="text/css" rel="stylesheet">
     <link rel="icon" href="./assets/link.svg"></link>
 </head>
 <body>
@@ -264,7 +264,11 @@
             <div class="playerSetting">
                 <p>Control scheme</p>
                 <select id="controlSchemeSelector" onchange="changeControlScheme($(this).val())"></select>
-                <p class="settingInfo">Reduces the number of buttons required to play the game<br><span id="currentControlScheme"></span></p>
+                <label class="simpleFlex">
+                    <input id="changeArrowsToControls" type="checkbox" onclick="PLAYERSETTINGS.changeArrowsToControls = $(this).prop('checked'); saveSettings(); game.updatePath()">
+                    <span></span>
+                </label>
+                <p class="settingInfo">Reduces the number of buttons required to play the game.<br>Enable the checkbox to visually change notes to match the control scheme.<br><span style="color: #dddddd" id="currentControlScheme"></span></p>
             </div>
 
             <button style="margin: 0px 0px 10px 0" class="textButton" onclick="$('.popup').hide()">Done</button>
@@ -479,16 +483,16 @@
 <script type="text/javascript" src="./libraries/jszip.js"></script>
 <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
 
-<script type="text/javascript" src="./scripts/miscfunctions.js?v=2"></script>
-<script type="text/javascript" src="./scripts/config.js?v=2"></script>
-<script type="text/javascript" src="./scripts/inputhandler.js?v=2"></script>
-<script type="text/javascript" src="./scripts/fileupload.js?v=2"></script>
-<script type="text/javascript" src="./scripts/gameimport.js?v=2"></script>
+<script type="text/javascript" src="./scripts/miscfunctions.js?v=3"></script>
+<script type="text/javascript" src="./scripts/config.js?v=3"></script>
+<script type="text/javascript" src="./scripts/inputhandler.js?v=3"></script>
+<script type="text/javascript" src="./scripts/fileupload.js?v=3"></script>
+<script type="text/javascript" src="./scripts/gameimport.js?v=3"></script>
 
-<script type="text/javascript" src="./classes/Conductor.js?v=2"></script>
-<script type="text/javascript" src="./classes/Editor.js?v=2"></script>
-<script type="text/javascript" src="./classes/Game.js?v=2"></script>
-<script type="text/javascript" src="./classes/Note.js?v=2"></script>
+<script type="text/javascript" src="./classes/Conductor.js?v=3"></script>
+<script type="text/javascript" src="./classes/Editor.js?v=3"></script>
+<script type="text/javascript" src="./classes/Game.js?v=3"></script>
+<script type="text/javascript" src="./classes/Note.js?v=3"></script>
 
 <script>
 

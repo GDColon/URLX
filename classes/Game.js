@@ -135,7 +135,7 @@ class Game {
 
         let arrow = foundArrow.arrow
         let isArrow = !arrow.match(/[^\^v<>]/g)
-        if (!ignoreControlScheme) switch (PLAYERSETTINGS.controlScheme) {
+        if (!ignoreControlScheme && PLAYERSETTINGS.changeArrowsToControls) switch (PLAYERSETTINGS.controlScheme) {
             case "onebutton": if (arrow != "x") arrow = "o"; break;
             case "anyarrow": if (isArrow) arrow = "+"; break;
             case "twoarrow":

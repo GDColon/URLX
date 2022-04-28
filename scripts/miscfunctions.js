@@ -63,7 +63,7 @@ function getSecsBetween(firstBeat, lastBeat, bpm) {
 
 // get twemoji svg from unicode
 function twemojiParse(str) {
-    return twemoji.parse(str, { folder: "svg", ext: '.svg' })
+    return twemoji.parse(str, { folder: "svg", ext: '.svg', className: 'twemoji' })
 }
 
 // get hit window size

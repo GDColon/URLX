@@ -80,7 +80,7 @@ const PLAYERS = [
 const CONTROLSCHEMES = {
     "normal": { name: "All notes", desc: "All notes must be hit with their respective arrow" },
     "nodoubles": { name: "No doubles", desc: "Double notes can be hit by pressing only one of their required keys" },
-    "twoarrow": { name: "3 button", desc: "Arrows only face up and right, but left can press right-facing notes and down can press up-facing notes" },
+    "twoarrow": { name: "3 button", desc: "Uses two arrows instead of four. Left can press right-facing notes, and down can press up-facing notes" },
     "anyarrow": { name: "2 button", desc: "Arrows can be hit with any of the four keys" },
     "onebutton": { name: "1 button", desc: "All notes can be hit with the spacebar" }
 }
@@ -100,7 +100,8 @@ const PLAYERSETTINGS = {
     skipWelcome: (currentSettings.skipWelcome === true), // skip welcome message (default false)
     inputOffset: Number(currentSettings.inputOffset) || 0, // input offset, lower if hitting too early and raise if hitting too late
     hitWindowMultiplier: Number(currentSettings.hitWindowMultiplier) || 1, // hit window multiplier, higher = more lenient
-    controlScheme: currentSettings.controlScheme || "normal" // control scheme, determines how many buttons are required to play
+    controlScheme: currentSettings.controlScheme || "normal", // control scheme, determines how many buttons are required to play
+    changeArrowsToControls: currentSettings.changeArrowsToControls !== false // visually change notes to match the control scheme (default true) 
 }
 
 // save settings to localstorage
@@ -121,6 +122,7 @@ $('#controlSchemeSelector').html(Object.entries(CONTROLSCHEMES).map(x => `<optio
 $('#playerIcon').html(twemojiParse(PLAYERSETTINGS.player))
 $('#playSFX').prop('checked', PLAYERSETTINGS.soundEffects)
 $('#skipWelcome').prop('checked', PLAYERSETTINGS.skipWelcome)
+$('#changeArrowsToControls').prop('checked', PLAYERSETTINGS.changeArrowsToControls)
 $('#inputOffset').val(PLAYERSETTINGS.inputOffset)
 $('#hitWindowMultiplier').val(PLAYERSETTINGS.hitWindowMultiplier)
 
@@ -198,6 +200,9 @@ updateHitWindowPreview()
 
 // feedback icons in controls menu
 $('#feedbackIcons').append(Object.values(EMOJIS.feedback).filter(x => x.str).map(x => `<p>${x.icon} ${x.str}</p>`).join(""))
+
+// use twemojis for controls
+$('#keyMenu').html(twemojiParse($('#keyMenu').html()))
 
 // check if browser supports cool filesystem stuff
 const browserDoesntSuck = typeof window.showSaveFilePicker === "function"

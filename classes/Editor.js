@@ -38,7 +38,7 @@ class Editor {
 
     emojiElement(emoji) {
         let foundIcon = EMOJIS.notes[emoji]
-        return `<div class="emoji"><p>${foundIcon ? foundIcon[0] : ""}</p></div>`
+        return `<div class="emoji"><p>${foundIcon ? twemojiParse(foundIcon[0]) : ""}</p></div>`
     }
 
     // change the arrow on a certain beat
