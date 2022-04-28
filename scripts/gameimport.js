@@ -10,17 +10,20 @@ let gameImportData = [
             {
                 name: "Also chart oneshot pulses (oneshot rows)",
                 id: "oneshotpulses",
-                type: "bool"
+                type: "bool",
+                checked: true
             },
             {
                 name: "Also chart classic pulses (classic rows)",
                 id: "classicpulses",
-                type: "bool"
+                type: "bool",
+                checked: true
             },
             {
                 name: "Use CPU hits for row pulses",
                 id: "cpupulses",
-                type: "bool"
+                type: "bool",
+                checked: true
             },
             {
                 name: "Also chart release (held beats)",
@@ -156,7 +159,7 @@ function validGameChart(game, chart, filename, settings={}) {
     gameData.settings.forEach(o => {
         let optionData = ""
         switch (o.type) {
-            case "bool": optionData = `<label><input setting="${o.id}" type="checkbox"><span></span></label><p>${o.name}</p>`; break;
+            case "bool": optionData = `<label><input setting="${o.id}" ${o.checked ? "checked " : ""}type="checkbox"><span></span></label><p>${o.name}</p>`; break;
             case "number": optionData = `<p>${o.name}</p> <input style="width: 75px; margin-left: 15px" setting="${o.id}" type="number" value="${isNaN(o.default) ? "" : o.default}"> <p>${o.unit || ""}</p>`; break;
             case "select":
                 let selectData = typeof o.options === "string" ? settings[o.options] : o.options
@@ -337,6 +340,10 @@ function importGameChart(providedSong={}) {
                 "subdivision": 4,
                 "offset": song.offset,
                 "volume": song.volume
+            }
+
+            if (chartSettings.cpupulses && (chartSettings.classicpulses || chartSettings.oneshotpulses)) {
+                chart.metadata.cpuClap = "shaker";
             }
 
             let freetimes = []
