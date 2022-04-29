@@ -194,7 +194,7 @@ const WINDOWS = {
 
 // hit window in settings
 function updateHitWindowPreview() {
-    $('#currentWindow').text(Number((WINDOWS.hit * 1000 * PLAYERSETTINGS.hitWindowMultiplier).toFixed(2)))
+    $('#currentWindow').text(fixed((WINDOWS.hit * 1000 * PLAYERSETTINGS.hitWindowMultiplier), 2))
 }
 updateHitWindowPreview()
 

@@ -5,13 +5,13 @@ function keyDown(e) {
     if (e.repeat) return key == " " ? e.preventDefault() : null // ignore holding keys down, also prevent space scrolling
     let activePopup = $('.popup:visible').length
 
-    if (key == "enter" && !activePopup && (game.paused || !game.active)) game.start(game.editor.selectedBeat || 1) // editor playtest
+    if (key == "enter" && !activePopup && (game.paused || !game.active)) game.start(game.editor.firstSelected() || 1) // editor playtest
     else if (game.active && ["enter", "escape", "p"].includes(key)) return game.restart() // editor reset
-    else if (key == "escape") return $('.popup:not(.importantPopup)').hide()
+    else if (key == "escape") return activePopup ? $('.popup:not(.importantPopup)').hide() : game.editor.deselectAll()
     else if (e.ctrlKey && key == "s") { e.preventDefault(); $(e.shiftKey ? '#exportBtn' : '#saveBtn').trigger('click'); return false }
     else if (e.ctrlKey && key == "o") { e.preventDefault(); $('#uploadButton').trigger('click'); return false }
 
-    // trigger notes
+    // trigger notes and other stuff
     switch (key.toLowerCase()) {
         case "arrowup": return presskey(e, "^")
         case "arrowright": return presskey(e, ">")
@@ -36,7 +36,7 @@ function presskey(e, key, editorOnly) {
     let gameRunning = game.active && !game.paused
     e.preventDefault();
     if (!CONFIG.autoplay && !editorOnly && gameRunning) game.checkHit(key)
-    else if (!gameRunning && game.editor.selectedBeat) game.editor.setNote(key, game.editor.selectedBeat)
+    else if (!gameRunning && game.editor.selectedBeats.length) game.editor.setManyNotes(key)
 
     if (e.ctrlKey && gameRunning) {
         // live charting

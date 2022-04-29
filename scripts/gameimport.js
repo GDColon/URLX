@@ -199,12 +199,12 @@ function validateGameChart(data) {
                // .trim()
 
                 try { return validGameChart(data.game, JSON.parse(chartData), data.file.name) }
-                catch(e) { console.log(chartData); console.log(e); return invalidGameChart("Invalid JSON")
+                catch(e) { console.log(chartData); console.error(e); return invalidGameChart("Invalid JSON")
             }
     
             case "fnf":
                 try { return validGameChart(data.game, JSON.parse(chartData), data.file.name) }
-                catch(e) { console.log(e); return invalidGameChart("Invalid JSON") }
+                catch(e) { console.error(e); return invalidGameChart("Invalid JSON") }
 
             case "sm":
                 let foundDifficulties = chartData.match(new RegExp(smDifficultyRegex, "g"))
@@ -489,7 +489,6 @@ function importGameChart(providedSong={}) {
             let smChart = gameChart.chart
             let bpmChanges = smChart.match(/#BPMS:((.|\n)+?);/)[1]
             if (!bpmChanges) throw new Error("No BPM!")
-            console.log(bpmChanges)
             bpmChanges = bpmChanges.replace(/\s/g, "").split(",").map(x => x.split("=")).map(n => ({beat: +n[0], bpm: +n[1]}))
             bpmChanges.forEach(x => {
                 if (x.beat > 0) chart.actions.push({ "beat": x.beat, "type": "bpm", "val": x.bpm })
@@ -554,7 +553,7 @@ function importGameChart(providedSong={}) {
     } // end of try
 
     catch(e) {
-        console.log(e)
+        console.error(e)
         alert("There was an error while trying to convert this chart!\n" + e)
         $('#loadingMenu').hide()
         gameChart = null

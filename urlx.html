@@ -11,7 +11,7 @@
     <meta property="og:type" content="website">
     <meta name="og:image" itemprop="image" content="https://gdcolon.com/urlx/assets/link.png">
     <title>URLX alpha</title>
-    <link href="./urlx.css?v=3" type="text/css" rel="stylesheet">
+    <link href="./urlx.css?v=4" type="text/css" rel="stylesheet">
     <link rel="icon" href="./assets/link.svg"></link>
 </head>
 <body>
@@ -38,7 +38,7 @@
                 <div class="editorSection">
     
                     <div class="editorField" id="startBtn">
-                        <div class="bigButton" onclick="game.start(game.editor.selectedBeat || 1)"><p>Play!</p></div>
+                        <div class="bigButton" onclick="game.start(game.editor.firstSelected() || 1)"><p>Play!</p></div>
                     </div>
     
                     <div class="editorField" id="stopBtn" style="display: none;">
@@ -87,13 +87,26 @@
 
             <div class="editorSectionSection"> <!-- right -->
                 <div class="editorSection" style="width: 180px; margin-right: 10px;">
-                    <div class="editorField">
-                        <p>Beat: <span id="currentBeat">-</span></p> 
+                    <div id="singleBeatInfo">
+                        <div class="editorField">
+                            <p>Beat: <span id="currentBeat">-</span></p> 
+                        </div>
+        
+                        <div class="editorField">
+                            <p>Time: <span id="currentTime">-</span></p> 
+                        </div>
                     </div>
-    
-                    <div class="editorField">
-                        <p>Time: <span id="currentTime">-</span></p> 
+
+                    <div id="multiBeatInfo" style="display: none;">
+                        <div class="editorField">
+                            <p id="selectedBeats"></p> 
+                        </div>
+        
+                        <div class="editorField">
+                            <p>Duration: <span id="selectedDuration">-</span></p> 
+                        </div>
                     </div>
+
 
                     <div class="editorField">
                         <button class="ourple" title="Settings" style="background-image: url(./assets/cog.svg);" onclick="$('#playerSettings').show()"></button>
@@ -107,7 +120,7 @@
                 <div class="editorSection" id="noteInfo" style="width: 325px; display: none;">
                     <div class="editorField">
                         <p style="width: 70px">Note:</p> 
-                        <select id="currentArrow" style="width: 151px;" onchange="game.editor.setNote($(this).val(), game.editor.selectedBeat)">
+                        <select id="currentArrow" style="width: 151px;" onchange="game.editor.setManyNotes($(this).val())">
                             <option value="-">(empty)</option>
                             <option value="o">Space</option>
                             <option value="<">Left</option>
@@ -124,7 +137,7 @@
                             <option value="<>">Left+Right</option>
                             <option value="x">Bomb</option>
                         </select>
-                        <button id="cpuButton" onclick="game.editor.toggleCPU()" style="background-image: url(./assets/cpu.svg);"></button>
+                        <button id="cpuButton" onclick="game.editor.toggleCPUMulti()" style="background-image: url(./assets/cpu.svg);"></button>
                         <button onclick="$('#chartSettings').show()" style="background-image: url(./assets/cog.svg);"></button>
 
                     </div>
@@ -142,7 +155,7 @@
                     </div>
 
                     <div style="text-align: right">
-                        <button class="textButton" style="height: 32px" onclick="game.editor.deselect()">Song settings</button>
+                        <button class="textButton" style="height: 32px" onclick="game.editor.deselectAll()">Song settings</button>
                     </div>
 
                 </div>
@@ -336,6 +349,7 @@
                     <span></span>
                     <p><key>Backspace</key> <key>Del</key> Remove note</p>
                     <p><key>Right Click</key> Toggle CPU note</p>
+                    <p><key>Esc</key> Deselect note</p>
                     <span></span>
                     <p><key>Enter</key> Playtest</p>
                     <p><key>Enter</key> <key>Esc</key> <key>P</key> Stop playtest</p>
@@ -483,16 +497,16 @@
 <script type="text/javascript" src="./libraries/jszip.js"></script>
 <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
 
-<script type="text/javascript" src="./scripts/miscfunctions.js?v=3"></script>
-<script type="text/javascript" src="./scripts/config.js?v=3"></script>
-<script type="text/javascript" src="./scripts/inputhandler.js?v=3"></script>
-<script type="text/javascript" src="./scripts/fileupload.js?v=3"></script>
-<script type="text/javascript" src="./scripts/gameimport.js?v=3"></script>
+<script type="text/javascript" src="./scripts/miscfunctions.js?v=4"></script>
+<script type="text/javascript" src="./scripts/config.js?v=4"></script>
+<script type="text/javascript" src="./scripts/inputhandler.js?v=4"></script>
+<script type="text/javascript" src="./scripts/fileupload.js?v=4"></script>
+<script type="text/javascript" src="./scripts/gameimport.js?v=4"></script>
 
-<script type="text/javascript" src="./classes/Conductor.js?v=3"></script>
-<script type="text/javascript" src="./classes/Editor.js?v=3"></script>
-<script type="text/javascript" src="./classes/Game.js?v=3"></script>
-<script type="text/javascript" src="./classes/Note.js?v=3"></script>
+<script type="text/javascript" src="./classes/Conductor.js?v=4"></script>
+<script type="text/javascript" src="./classes/Editor.js?v=4"></script>
+<script type="text/javascript" src="./classes/Game.js?v=4"></script>
+<script type="text/javascript" src="./classes/Note.js?v=4"></script>
 
 <script>
 

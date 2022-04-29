@@ -243,9 +243,9 @@ class Game {
         let logObj = {
             "Hits": hits,
             "Misses": misses,
-            "Accuracy": (misses < 1 ? 100 : Number((hits / (hits + misses) * 100).toFixed(2))) + "%",
+            "Accuracy": (misses < 1 ? 100 : fixed((hits / (hits + misses) * 100), 2)) + "%",
             "Average Offset": offsetNotes.length ? Number((offsetNotes.map(x => x.accuracy).reduce((a, b) => a + b, 0) / offsetNotes.length * 1000).toFixed(2)) + " ms" : "-",
-            "Last Note Offset": lastOffset ? Number((lastOffset.accuracy * 1000).toFixed(2)) + " ms" : "-"
+            "Last Note Offset": lastOffset ? fixed((lastOffset.accuracy * 1000), 2) + " ms" : "-"
         }
 
         $('#gameplayStats').html(Object.entries(logObj).map(x => `<p><b>${x[0]}</b>: ${x[1]}</p>`))

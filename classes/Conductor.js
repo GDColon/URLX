@@ -47,8 +47,8 @@ class Conductor {
             onload: () => { this.game.editor.ready() },
             onend: () => { this.game.finish() },
             onplay: () => { this.game.musicstart() },
-            onloaderror: (id, err) => { console.log(err); alert(`Error while loading song! ${!browserDoesntSuck ? "Your current browser lacks lots of modern features, maybe try switching?" : ""}\n` + err) },
-            onplayerror : (id, err) => { console.log(err); alert(`Error while playing song! ${!browserDoesntSuck ? "Your current browser lacks lots of modern features, maybe try switching?" : ""}\n` + err) }
+            onloaderror: (id, err) => { console.error(err); alert(`Error while loading song! ${!browserDoesntSuck ? "Your current browser lacks lots of modern features, maybe try switching?" : ""}\n` + err) },
+            onplayerror : (id, err) => { console.error(err); alert(`Error while playing song! ${!browserDoesntSuck ? "Your current browser lacks lots of modern features, maybe try switching?" : ""}\n` + err) }
         });
         this.noSong = !songData
         this.filename = songFilename || ""
@@ -111,7 +111,7 @@ class Conductor {
 
     setSpeed(speed, add) {
         if (this.game.active) return
-        this.speed = add ? +(this.speed + speed).toFixed(4) : speed
+        this.speed = add ? fixed(this.speed + speed, 4) : speed
         if (this.speed < 0.1) this.speed = 0.1
         else if (this.speed > 10) this.speed = 10
         this.music.rate(this.speed)

@@ -30,7 +30,7 @@ function newGame(...args) {
     if (typeof game == "object") game.selfdestruct()
     try { game = new Game(...args) }
     catch(e) {
-        console.log(e)
+        console.error(e)
         alert(`Something went wrong while trying to load that chart!\nErorr: ${e}`)
         game = new Game()
     }
@@ -52,6 +52,11 @@ function timestamp(timeInSeconds) {
     seconds = Math.floor(time - minutes * 60),
     milliseconds = time.slice(-3);
     return minutes + ':' + pad(seconds, 2) + '.' + pad(milliseconds, 3);
+}
+
+// tofixed except it converts back to a number (removes long decimals)
+function fixed(num, places) {
+    return Number(num.toFixed(places))
 }
 
 // get the number of seconds between two beats with no bpm changes
