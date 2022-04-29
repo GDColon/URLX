@@ -293,14 +293,30 @@ class Editor {
         $('#exportBtn').hide()
         $('#exporting').show()
         let chartName = this.chartName()
+
+        if (this.game.conductor.noSong) {
+            let chartBlob = new Blob([this.game.chartString()], {type: "application/json"})
+            let chartSaveOptions = {suggestedName: chartName + ".urlx", types: [{description: "URLX chart (no song)", accept: {"application/json": [".urlx", ".json"]}}] }
+            this.savePrompt(chartBlob, chartSaveOptions, ".urlx", "application/json")
+            $('#exportBtn').show()
+            $('#exporting').hide()
+            return
+        }
+
         let zipFile = new JSZip();
         zipFile.file(`${chartName}.urlx`, this.game.chartString())
-        if (!this.game.conductor.noSong) zipFile.file(this.game.conductor.filename, this.game.conductor.music._src.split(",")[1], {base64: true})
+        zipFile.file(this.game.conductor.filename, this.game.conductor.music._src.split(",")[1], {base64: true})
         zipFile.generateAsync({type: "blob"}).then(async blob => {
+            let saveOptions = {suggestedName: chartName + ".urlzip", types: [{description: "Zip file", accept: {"application/zip": [".urlzip", ".zip"]}}] }
+            this.savePrompt(blob, saveOptions, ".urlzip", "application/zip")
+            $('#exportBtn').show()
+            $('#exporting').hide()
+        })
+    }
 
+    savePrompt(blob, saveOptions, extension, blobType) {
             // the cool modern way
             if (browserDoesntSuck) {
-                let saveOptions = {suggestedName: chartName + ".urlzip", types: [{description: "Zip file", accept: {"application/zip": [".urlzip", ".zip"]}}] }
                 window.showSaveFilePicker(saveOptions)
                 .then(selectedFile => {
                     selectedFile.createWritable().then(writable => {
@@ -312,21 +328,14 @@ class Editor {
             // the lame old way
             else {
                 let downloader = document.createElement('a');
-                downloader.href = URL.createObjectURL(new Blob([blob], {type: 'application/zip'}))
-                downloader.setAttribute("download", chartName + ".urlzip");
+                downloader.href = URL.createObjectURL(new Blob([blob], {type: blobType}))
+                downloader.setAttribute("download", chartName + extension);
                 document.body.appendChild(downloader);
                 downloader.click();
                 document.body.removeChild(downloader);
             }
-
-            $('#exportBtn').show()
-            $('#exporting').hide()
-        })
     }
 
-    loadFromZip() {
-
-    }
 }
 
 //=============================//
