@@ -21,4 +21,6 @@ I'm happy to accept any pull requests and contributions, but only if it's not to
 
 [jszip 3.9.1](https://cdnjs.com/libraries/jszip) (handles zipping)
 
+[path.js](https://github.com/kesuiket/path.js) (port of node.js path module)
+
 (also twemoji but that one is directly fetched since it updates a lot)

@@ -96,6 +96,23 @@ let gameImportData = [
                 type: "bool"
             }
         ]
+    },
+
+    {
+        name: "Osu",
+        id: "osu",
+        hover: "osu thingy",
+        filestring: ".osz file",
+        filetypes: [".osz"],
+        details: "",
+        settings: [
+            {
+                name: "Chart difficulty",
+                id: "difficulty",
+                type: "select",
+                options: "difficulties"
+            }
+        ]
     }
 ]
 
@@ -183,7 +200,7 @@ function validateGameChart(data) {
 
     let reader = new FileReader()
 
-    reader.onload = function() {
+    reader.onload = async function() {
         let chartData = reader.result.replace(/(\r|\0)/g, "") // remove return chars and null chars
         switch (data.game) {
             case "rd":
@@ -211,6 +228,25 @@ function validateGameChart(data) {
                 if (!foundDifficulties || !foundDifficulties.length) return invalidGameChart("No difficulties found!")
                 foundDifficulties = foundDifficulties.map(x => x.match(smDifficultyRegex)).map(x => ({ id: x[2], name: `${x[2]}${x[1].trim().length ? ` (${x[1].trim()})` : ""}` }))
                 return validGameChart(data.game, chartData, data.file.name, {difficulties: foundDifficulties})
+
+            case "osu":
+                try {
+                    let jsZip = new JSZip();
+                    let zip = await jsZip.loadAsync(data.file);
+
+                    console.log(zip.files);
+                    let foundDifficulties = [];
+                    zip.forEach((relativePath, file) => {
+                        if (path.parse(relativePath).ext === ".osu") {
+                            foundDifficulties.push(relativePath); // TODO use parser
+                        }
+                    });
+                    return validGameChart(data.game, chartData, data.file.name, {difficulties: foundDifficulties});
+                }
+                catch (e) {
+                    console.error(e);
+                    return invalidGameChart("Error reading zip file");
+                }
         }
     }
 
