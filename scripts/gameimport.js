@@ -41,7 +41,7 @@ let gameImportData = [
     {
         name: "Friday Night Funkin'",
         id: "fnf",
-        hover: "whitty real",
+        hover: "the fnf thingie",
         filestring: ".json file",
         filetypes: [".json"],
         details: "All notes will be charted, and opponent hits will be marked as CPU notes. Held notes will be replaced with single hits.<br><b>Song offset is required to snap beats correctly!</b> It can be found in an audio editor by getting the amount of time between the start of the song and beat 1.<br>Anyways expect lots of bugs because chart format differs between mods.",
@@ -70,11 +70,20 @@ let gameImportData = [
             }
         ]
     },
+    
+    {
+        name: "Osu",
+        id: "osu",
+        hover: "bruj osu thing",
+        filestring: ".osu file",
+        filetypes: [".osu"],
+        details: "Not alot to explain its like fnf",
+    },
 
     {
         name: "StepMania",
         id: "sm",
-        hover: "how.",
+        hover: "how the f.",
         filestring: ".sm file",
         filetypes: [".sm"],
         details: "All notes will be charted. Held/roll notes will be replaced with single hits, and mines will be marked as CPU notes. No sexy visuals unfortunately 😔",
