@@ -41,18 +41,18 @@ class Game {
         $('input, button, select').blur()
     }
 
-    restart() {
+    restart(force) {
         this.active = false
         this.conductor.reset()
         this.resetNotes()
-        this.editor.stopPlaytest()
+        if (!force) this.editor.stopPlaytest()
 
         $('#startBtn').show()
         $('#stopBtn').hide()
     }
 
     selfdestruct() {
-        this.restart()
+        this.restart(true)
         Object.keys(this).forEach(k => {
             delete this[k]
         })
