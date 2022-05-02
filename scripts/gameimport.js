@@ -115,6 +115,11 @@ let gameImportData = [
                 id: "difficulty",
                 type: "select",
                 options: "difficulties"
+            },
+            {
+                name: "Use arrows (try to)",
+                id: "usearrows",
+                type: "bool"
             }
         ]
     }
@@ -603,8 +608,19 @@ async function importGameChart(providedSong={}) {
                 let noteSecs = hitObject.time / 1000;
                 let beat = noteSecs / barLength + 1;
                 beat = toSafe(beat, 4);
-    
-                addNote(beat, "o", false);
+
+                if (chartSettings.usearrows) {
+                    // ...
+                    if (hitObject.x < 320 && hitObject.y < 240)
+                        addNote(beat, "^", false);
+                    else if (hitObject.x > 320 && hitObject.y < 240)
+                        addNote(beat, ">", false);
+                    else if (hitObject.x < 320 && hitObject.y > 240)
+                        addNote(beat, "<", false);
+                    else if (hitObject.x > 320 && hitObject.y > 240)
+                        addNote(beat, "v", false);
+                    else addNote(beat, "o", false);
+                } else addNote(beat, "o", false);
             });
 
             break;
