@@ -176,6 +176,7 @@ class Editor {
     }
 
     firstSelected() {
+        if (!this.selectedBeats.length) return 0
         return Math.min(...this.selectedBeats)
     }
 
