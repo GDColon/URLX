@@ -373,7 +373,7 @@ class Editor {
             else {
                 let downloader = document.createElement('a');
                 downloader.href = URL.createObjectURL(new Blob([blob], {type: blobType}))
-                downloader.setAttribute("download", chartName + extension);
+                downloader.setAttribute("download", saveOptions.suggestedName);
                 document.body.appendChild(downloader);
                 downloader.click();
                 document.body.removeChild(downloader);
