@@ -6,6 +6,7 @@ let gameImportData = [
         filestring: ".rdlevel file",
         filetypes: [".rdlevel"],
         details: "All 'hits' in the level will be charted as spacebar presses.",
+        songIncluded: false,
         settings: [
             {
                 name: "Also chart oneshot pulses (oneshot rows)",
@@ -45,6 +46,7 @@ let gameImportData = [
         filestring: ".json file",
         filetypes: [".json"],
         details: "All notes will be charted, and opponent hits will be marked as CPU notes. Held notes will be replaced with single hits.<br><b>Song offset is required to snap beats correctly!</b> It can be found in an audio editor by getting the amount of time between the start of the song and beat 1.<br>Anyways expect lots of bugs because chart format differs between mods.",
+        songIncluded: false,
         settings: [
             {
                 name: "Song offset:",
@@ -78,6 +80,7 @@ let gameImportData = [
         filestring: ".sm file",
         filetypes: [".sm"],
         details: "All notes will be charted. Held/roll notes will be replaced with single hits, and mines will be marked as CPU notes. No sexy visuals unfortunately 😔",
+        songIncluded: false,
         settings: [
             {
                 name: "Chart difficulty",
@@ -104,7 +107,8 @@ let gameImportData = [
         hover: "osu thingy",
         filestring: ".osz file",
         filetypes: [".osz"],
-        details: "",
+        details: "All hits in the level will be charted as spacebar presses. Also bpm changes don't work for this moment.",
+        songIncluded: true,
         settings: [
             {
                 name: "Chart difficulty",
@@ -173,6 +177,8 @@ function validGameChart(game, chart, filename, settings={}) {
     $('#gameImportName').text(gameData.name)
     $('#gameImportInfo').html(gameData.details)
     $('#gameImportSettings').empty()
+    if (gameData.songIncluded) $("#gameImportSongContainer").hide();
+    else $("#gameImportSongContainer").show();
     gameData.settings.forEach(o => {
         let optionData = ""
         switch (o.type) {
@@ -569,8 +575,9 @@ async function importGameChart(providedSong={}) {
             break;
 
         case "osu": {
-
-            console.log(gameChart);
+            // TODO:
+            // bpm changes
+            // audio import fix (currently can't export audio in urlzip files)
 
             let jsZip = new JSZip();
             let zip = await jsZip.loadAsync(gameChart.chart);
@@ -578,12 +585,14 @@ async function importGameChart(providedSong={}) {
             let data = OsuParser.Parse(await zip.file(chartSettings.difficulty).async("string"));
             console.log(data);
 
+            providedSong.data = `data:audio/mpeg;base64,${await zip.file(data.audioFilename).async("base64")}`;
+            
             const bpm = data.timingPoints[0].bpm;
             console.log(bpm);
 
             chart.metadata = {
                 "name": data.title,
-                "filename": chartSettings.difficulty || "",
+                "filename": providedSong.name || "",
                 "bpm": bpm,
                 "subdivision": 8,
                 "offset": 0
