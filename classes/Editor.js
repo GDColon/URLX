@@ -100,7 +100,7 @@ class Editor {
     }
 
     updateSongInfo() {
-        $('#chartName').val(this.game.chartName)
+        $('#chartNameInput').val(this.game.chartName)
         $('#songFilename').val(this.game.conductor.filename)
         $('#startingBPM').val(this.game.conductor.bpmChanges[0].bpm)
         $('#startingSubdiv').val(this.game.conductor.subdivisionChanges[0].subdivision)
@@ -299,7 +299,7 @@ class Editor {
     }
 
     chartName(ext) {
-        return (safeFilename($('#chartName').val()) || "untitled") + (ext ? ".urlx" : "")
+        return (safeFilename($('#chartNameInput').val()) || "untitled") + (ext ? ".urlx" : "")
     }
 
     async saveChart() {
