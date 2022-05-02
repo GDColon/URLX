@@ -585,13 +585,19 @@ async function importGameChart(providedSong={}) {
                 "name": data.title,
                 "filename": chartSettings.difficulty || "",
                 "bpm": bpm,
-                "subdivision": 1,
+                "subdivision": 8,
                 "offset": 0
             }
-            
+
             data.hitObjects.forEach((hitObject) => {
-                addNote(Math.round(hitObject.time / bpm), "o", false); // TODO do something abt it
+                let barLength = 60 / bpm;
+                let noteSecs = hitObject.time / 1000;
+                let beat = noteSecs / barLength + 1;
+                beat = toSafe(beat, 4);
+    
+                addNote(beat, "o", false);
             });
+
             break;
         }
     }
