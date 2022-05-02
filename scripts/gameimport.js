@@ -234,14 +234,13 @@ function validateGameChart(data) {
                     let jsZip = new JSZip();
                     let zip = await jsZip.loadAsync(data.file);
 
-                    console.log(zip.files);
                     let foundDifficulties = [];
-                    zip.forEach((relativePath, file) => {
-                        if (path.parse(relativePath).ext === ".osu") {
-                            foundDifficulties.push(relativePath); // TODO use parser
+                    for await (const file of Object.values(zip.files)) {
+                        if (path.parse(file.name).ext === ".osu") {
+                            foundDifficulties.push(file.name); // I think you can't use parser
                         }
-                    });
-                    return validGameChart(data.game, chartData, data.file.name, {difficulties: foundDifficulties});
+                    }
+                    return validGameChart(data.game, data.file, data.file.name, {difficulties: foundDifficulties});
                 }
                 catch (e) {
                     console.error(e);
@@ -263,11 +262,12 @@ function confirmGameImport() {
     }
 }
 
-function importGameChart(providedSong={}) {
+async function importGameChart(providedSong={}) {
     $('#loadingMenu').show()
     $('#gameImportConfig').hide()
     $('#gameImportSong').val("")
     $('#gameImportSongName').text($('#gameImportSongName').attr("default"))
+    
 
     try { // when in doubt lmao
 
@@ -567,6 +567,33 @@ function importGameChart(providedSong={}) {
                 })
             })
             break;
+
+        case "osu": {
+
+            console.log(gameChart);
+
+            let jsZip = new JSZip();
+            let zip = await jsZip.loadAsync(gameChart.chart);
+
+            let data = OsuParser.Parse(await zip.file(chartSettings.difficulty).async("string"));
+            console.log(data);
+
+            const bpm = data.timingPoints[0].bpm;
+            console.log(bpm);
+
+            chart.metadata = {
+                "name": data.title,
+                "filename": chartSettings.difficulty || "",
+                "bpm": bpm,
+                "subdivision": 1,
+                "offset": 0
+            }
+            
+            data.hitObjects.forEach((hitObject) => {
+                addNote(Math.round(hitObject.time / bpm), "o", false); // TODO do something abt it
+            });
+            break;
+        }
     }
     
     chart.notes = chart.notes.filter(x => !x.auto || (x.auto && !chart.notes.find(z => !z.auto && z.beat == x.beat)) ) // remove auto overlaps

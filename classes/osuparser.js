@@ -1,29 +1,52 @@
-/*
- * Not an actual osu parser, just for the URLX
- * based on https://github.com/nojhamster/osu-parser/
- */
+//
+// Not an actual osu parser, just for the URLX
+// based on https://github.com/nojhamster/osu-parser/
+//
+//
+//                               ┌──────────────────────────────────┐
+//                               │                                  │                  ┌─────────────────────────────────┐
+//       ┌─────────────────┐     │     ┌─────────────────────┐      │                  │                                 │
+//       │                 │     ▼     │                     │      │                  │ return instance.data()          │
+//       │ OsuParser.Parse ├──────────►│ instance.readLine() ├──────┴─────────────────►│ Creates JS Object from the data │
+//       │                 │           │                     │           isDone?       │                                 │
+//       └─────────────────┘           └─────────┬───────────┘                         └─────────────────────────────────┘
+//                                               │          ▲
+//                                               │          └─────────────Reads all lines till the end of the file
+//                                               │
+//                                               │
+//                                               │
+//                                               │                    unknownSection?
+//             ┌─────────────────────────────────┼──────────────────────────────────────────────────┐
+//             │                                 │                                                  │
+//             │                                 │                                                  │
+//             │                                 │                                                  ▼
+// ┌───────────┴────────────┐       ┌────────────┴─────────────┐        ┌─────────────────────────────────────────────────────┐
+// │                        │       │                          │        │                                                     │
+// │ parseHitObject         │       │ parseTimingPoint         │        │ If key-value line is detected, then                 │
+// │                        │       │                          │        │ It writes it to OsuParser.OsuValues.<SECTION>.<KEY> │
+// │ Parses hit object line │       │ Parses timing point line │        │                                                     │
+// │                        │       │                          │        └─────────────────────────────────────────────────────┘
+// └────────────────────────┘       └──────────────────────────┘
+//
 
 /**
  * @typedef {Object} OsuData
  *
  *
  * @property {String} title title of the song
- * @property {String} artist
+ * @property {String} artist artist of the song
  * @property {String} creator creator of the song
- * @property {String} difficulty
+ * @property {String} difficulty difficulty of the song
  *
  * @property {String} audioFilename
  * @property {("osu!"|"osu!taiko"|"osu!catch"|"osu!mania")} mode
+ *
+ * @property {HitObject[]} hitObjects hit objects sorted by time
+ * @property {TimingPoint[]} timingPoints timing points sorded by time
  */
 
 /**
  * @typedef {Object} HitObject
- * @property {Number} time position in seconds
- */
-
-/**
- * Hit object typedef for in-class use
- * @typedef {Object} HitObjectPriv
  * @property {Number} time position in miliseconds
  *
  * Position is to do, I was thinking about something like:
@@ -36,13 +59,8 @@
 
 /**
  * @typedef {Object} TimingPoint
- */
-
-/**
- * Timing point typedef for in-class use
- * @typedef {Object} TimingPointPriv
  * @property {Number} time position in miliseconds
- * @property {Number} beatLength
+ * @property {?Number} bpm
  */
 
 const sectionReg = /^\[([a-zA-Z0-9]+)\]$/;
@@ -88,6 +106,9 @@ class OsuParser {
                 break;
         }
 
+        this.timingPoints.sort((a, b) => a.time - b.time);
+        this.hitObjects.sort((a, b) => a.time - b.time);
+
         return {
             title: this.otherValues.metadata?.Title,
             artist: this.otherValues.metadata?.Artist,
@@ -95,6 +116,8 @@ class OsuParser {
             difficulty: this.otherValues.metadata?.Version,
             audioFilename: this.otherValues.general?.AudioFilename,
             mode: mode,
+            hitObjects: this.hitObjects,
+            timingPoints: this.timingPoints,
         };
     }
 
@@ -129,15 +152,20 @@ class OsuParser {
             timingChange: splitted[6] == 1,
         };
 
+        /**
+         * @type {TimingPoint}
+         */
+         let timingPointOut = {
+            time: timingPoint.time,
+        };
+
         if (!isNaN(timingPoint.beatLength) && timingPoint.beatLength !== 0) {
             if (timingPoint.beatLength > 0) {
-            } else {
-                // If negative, beatLength is a velocity factor
-                timingPoint.velocity = Math.abs(100 / timingPoint.beatLength);
+                timingPointOut.bpm = Math.round(60000 / timingPoint.beatLength);
             }
         }
 
-        this.timingObjects.push(timingPoint);
+        this.timingPoints.push(timingPointOut);
     }
 
     /**
@@ -187,15 +215,15 @@ class OsuParser {
 
     /**
      * @private
-     * @type {HitObjectPriv[]}
+     * @type {HitObject[]}
      */
     hitObjects = [];
 
     /**
      * @private
-     * @type {TimingPointPriv[]}
+     * @type {TimingPoint[]}
      */
-    timingObjects = [];
+    timingPoints = [];
 
     /**
      * @private
