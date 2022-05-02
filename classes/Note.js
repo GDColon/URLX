@@ -65,6 +65,7 @@ class Note {
         else if (accuracy < WINDOWS.hit / 1.5) this.feedback = isLate ? "lperfect" : "eperfect"
         else this.feedback = isLate ? "late" : "early"
         this.game.setFeedback(this.feedback)
+        this.game.frameOffset[isLate ? "late" : "early"] += accuracy * 60
         clearTimeout(this.missQueue)
     }
 
