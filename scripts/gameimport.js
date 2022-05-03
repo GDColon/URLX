@@ -102,7 +102,7 @@ let gameImportData = [
     },
 
     {
-        name: "Osu",
+        name: "Osu!",
         id: "osu",
         hover: "osu thingy",
         filestring: ".osz file",
