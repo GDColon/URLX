@@ -90,7 +90,7 @@ class Game {
 
         let hitTime = conductor.getSecsFromBeat(conductor.beat) * 1000
         const prevBeat = conductor.beat;
-        console.log(conductor.beat);
+
         if (hitTime - 50 < Date.now() - this.startTime) {
             while(true) {
                 conductor.increment();

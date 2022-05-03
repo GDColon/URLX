@@ -588,12 +588,10 @@ async function importGameChart(providedSong={}) {
             let zip = await jsZip.loadAsync(gameChart.chart);
 
             let data = OsuParser.Parse(await zip.file(chartSettings.difficulty).async("string"));
-            console.log(data);
 
             providedSong.data = `data:audio/mpeg;base64,${await zip.file(data.audioFilename).async("base64")}`;
             
             const bpm = data.timingPoints[0].bpm;
-            console.log(bpm);
 
             chart.metadata = {
                 "name": data.title,
