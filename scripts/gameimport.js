@@ -122,6 +122,17 @@ let gameImportData = [
                 type: "bool"
             }
         ]
+    },
+    {
+        name: "A dance of fire and ice",
+        id: "adofai",
+        hover: "Implementing this wall hell",
+        filestring: ".adofai file",
+        filetypes: [".adofai"],
+        details: "idk what to put here",
+        settings: [
+
+        ]
     }
 ]
 
@@ -257,6 +268,10 @@ function validateGameChart(data) {
                     console.error(e);
                     return invalidGameChart("Error reading zip file");
                 }
+
+            case "adofai": {
+                return validGameChart(data.game, chartData, data.file.name, {});
+            }
         }
     }
 
@@ -622,6 +637,43 @@ async function importGameChart(providedSong={}) {
             });
 
             break;
+        }
+        case "adofai": {
+            // I suck at math (plz somebody help)
+
+            const beatPrecision = 1;
+
+            const data = ReadAfodaiString(gameChart.chart);
+
+            chart.metadata = {
+                "name": data.settings.song,
+                "filename": "",
+                "bpm": data.settings.bpm * beatPrecision,
+                "subdivision": beatPrecision,
+                "offset": 0
+            }
+            console.log(data.settings.bpm * beatPrecision);
+
+            // let time = 0;
+            let bpm = data.settings.bpm;
+            let beat = 0;
+            data.events.forEach((event) => {
+                if (event.bpm !== null) {
+                    bpm = event.bpm;
+                    chart.actions.push({ beat: beat, type: "bpm", val: bpm * beatPrecision });
+                    console.log(bpm * beatPrecision);
+                }
+
+                let barLength = 60 / (bpm * 8);
+                beat += toSafe(event.angleChange / 180, 4) / barLength + 1;
+
+                console.log(beat);
+
+                addNote(toSafe(beat), "o", false);
+                //beat +=  * beatPrecision;
+
+                //time += event.time;
+            });
         }
     }
     
