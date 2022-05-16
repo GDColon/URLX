@@ -3,7 +3,6 @@
 html {
     --gridSize: 48px;
     --gridBorder: 2px;
-    --gridBorderColor: #444444;
 
     --emojired: #DD2E44;
     --emojiyellow: #F4900C;
@@ -11,13 +10,39 @@ html {
     --emojiblue: #3B88C3;
     --emojipurple: #9266CC;
     --emojigrey: #31373D;
-    
-    --lightgrey: #555555
+}
+
+.defaultTheme {
+    --bg-primary: #111111;
+    --bg-secondary: #222222;
+    --bg-tertiary: #333333;
+    --bg-popup: black;
+    --bg-textbox: #696969;
+    --bg-textbox-hover: #696969; /*nice*/
+    --text: #FFFFFF;
+    --gridBorderColor: #444444;
+    --note-selected: #777777;
+    --lightgrey: #555555;
+}
+
+.lightTheme {
+    --bg-primary: white;
+    --bg-secondary: #EEEEEE;
+    --bg-tertiary: #DDDDDD;
+    --bg-popup: white;
+    --bg-textbox: #BBBBBB; 
+    --bg-textbox-hover: #AAAAAA;
+    --text: #111111;
+    --gridBorderColor: #BBBBBB;
+    --note-selected: var(--bg-tertiary);
+    --lightgrey: #BBBBBB;
+    --emojigrey: #BBBBBB;
 }
 
 p, h1, h2, h3, input, select, button {
-    color: white;
+    color: var(--text);
     font-family: Lato, Arial;
+    transition: all 0.4s;
 }
 
 p {
@@ -40,10 +65,11 @@ h3 {
 }
 
 body {
-    background-color: #111111; 
+    background-color: var(--bg-primary); 
     height: 100%;
     margin: 0px 0px;
     overflow: hidden;
+    transition: all 0.4s;
 }
 
 hr {
@@ -82,9 +108,9 @@ hr {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: black;
+    background-color: var(--bg-popup);
     border-radius: 20px;
-    border: 3px solid #333333;
+    border: 3px solid var(--bg-tertiary);
     width: 550px;
     padding: 20px 60px;
 }
@@ -114,7 +140,7 @@ hr {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #111111;
+    background-color: var(--bg-primary);
     border: 2px dashed white;
     border-radius: 15px;
     width: 180px;
@@ -130,11 +156,11 @@ hr {
 }
 
 .chartBox:hover {
-    background-color: #222222;
+    background-color: var(--bg-secondary);
 }
 
 .chartBox.dragOver, .chartBox:active {
-    background-color: #333333;
+    background-color: var(--bg-tertiary);
 }
 
 .uploadOption .loadFrom {
@@ -202,7 +228,7 @@ hr {
 ::-webkit-scrollbar {
     height: 12px;
     width: 16px;
-    background-color: #333333;
+    background-color: var(--bg-tertiary);
 }
   
 ::-webkit-scrollbar-thumb {
@@ -234,7 +260,7 @@ hr {
     width: var(--gridSize);
     height: var(--gridSize);
     cursor: pointer;
-    background-color: #222222;
+    background-color: var(--bg-secondary);
     border: var(--gridBorder) solid var(--gridBorderColor);
     user-select: none;
     position: relative;
@@ -246,7 +272,7 @@ hr {
 
 .note.selected {
     z-index: 3;
-    background-color: #777777;
+    background-color: var(--note-selected);
     border-color: lime;
 }
 
@@ -352,6 +378,7 @@ input, select {
     text-align: center;
     font-size: 18px;
     -moz-appearance: textfield;
+    background-color: var(--bg-textbox);
 }
 
 
@@ -376,7 +403,7 @@ button:active, label span:active, .bigButton:active {
 }
 
 input:not(.noHover):hover, select:not(.noHover):hover {
-    background-color: #696969;
+    background-color: var(--bg-textbox-hover);
 }
 
 .editorSection ::placeholder {
