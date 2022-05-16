@@ -6,6 +6,7 @@ let gameImportData = [
         filestring: ".rdlevel file",
         filetypes: [".rdlevel"],
         details: "All 'hits' in the level will be charted as spacebar presses.",
+        songIncluded: false,
         settings: [
             {
                 name: "Also chart oneshot pulses (oneshot rows)",
@@ -45,6 +46,7 @@ let gameImportData = [
         filestring: ".json file",
         filetypes: [".json"],
         details: "All notes will be charted, and opponent hits will be marked as CPU notes. Held notes will be replaced with single hits.<br><b>Song offset is required to snap beats correctly!</b> It can be found in an audio editor by getting the amount of time between the start of the song and beat 1.<br>Anyways expect lots of bugs because chart format differs between mods.",
+        songIncluded: false,
         settings: [
             {
                 name: "Song offset:",
@@ -78,6 +80,7 @@ let gameImportData = [
         filestring: ".sm file",
         filetypes: [".sm"],
         details: "All notes will be charted. Held/roll notes will be replaced with single hits, and mines will be marked as CPU notes. No sexy visuals unfortunately 😔",
+        songIncluded: false,
         settings: [
             {
                 name: "Chart difficulty",
@@ -93,6 +96,29 @@ let gameImportData = [
             {
                 name: "Also chart releases (held/roll notes)",
                 id: "releases",
+                type: "bool"
+            }
+        ]
+    },
+
+    {
+        name: "Osu!",
+        id: "osu",
+        hover: "osu thingy",
+        filestring: ".osz file",
+        filetypes: [".osz"],
+        details: "All hits in the level will be charted as spacebar presses. Also bpm changes don't work for this moment.",
+        songIncluded: true,
+        settings: [
+            {
+                name: "Chart difficulty",
+                id: "difficulty",
+                type: "select",
+                options: "difficulties"
+            },
+            {
+                name: "Use arrows (try to)",
+                id: "usearrows",
                 type: "bool"
             }
         ]
@@ -156,6 +182,8 @@ function validGameChart(game, chart, filename, settings={}) {
     $('#gameImportName').text(gameData.name)
     $('#gameImportInfo').html(gameData.details)
     $('#gameImportSettings').empty()
+    if (gameData.songIncluded) $("#gameImportSongContainer").hide();
+    else $("#gameImportSongContainer").show();
     gameData.settings.forEach(o => {
         let optionData = ""
         switch (o.type) {
@@ -183,7 +211,7 @@ function validateGameChart(data) {
 
     let reader = new FileReader()
 
-    reader.onload = function() {
+    reader.onload = async function() {
         let chartData = reader.result.replace(/(\r|\0)/g, "") // remove return chars and null chars
         switch (data.game) {
             case "rd":
@@ -211,6 +239,24 @@ function validateGameChart(data) {
                 if (!foundDifficulties || !foundDifficulties.length) return invalidGameChart("No difficulties found!")
                 foundDifficulties = foundDifficulties.map(x => x.match(smDifficultyRegex)).map(x => ({ id: x[2], name: `${x[2]}${x[1].trim().length ? ` (${x[1].trim()})` : ""}` }))
                 return validGameChart(data.game, chartData, data.file.name, {difficulties: foundDifficulties})
+
+            case "osu":
+                try {
+                    let jsZip = new JSZip();
+                    let zip = await jsZip.loadAsync(data.file);
+
+                    let foundDifficulties = [];
+                    for await (const file of Object.values(zip.files)) {
+                        if (path.parse(file.name).ext === ".osu") {
+                            foundDifficulties.push(file.name); // I think you can't use parser
+                        }
+                    }
+                    return validGameChart(data.game, data.file, data.file.name, {difficulties: foundDifficulties});
+                }
+                catch (e) {
+                    console.error(e);
+                    return invalidGameChart("Error reading zip file");
+                }
         }
     }
 
@@ -227,11 +273,12 @@ function confirmGameImport() {
     }
 }
 
-function importGameChart(providedSong={}) {
+async function importGameChart(providedSong={}) {
     $('#loadingMenu').show()
     $('#gameImportConfig').hide()
     $('#gameImportSong').val("")
     $('#gameImportSongName').text($('#gameImportSongName').attr("default"))
+    
 
     try { // when in doubt lmao
 
@@ -531,6 +578,51 @@ function importGameChart(providedSong={}) {
                 })
             })
             break;
+
+        case "osu": {
+            // TODO:
+            // bpm changes
+            // audio import fix (currently can't export audio in urlzip files)
+
+            let jsZip = new JSZip();
+            let zip = await jsZip.loadAsync(gameChart.chart);
+
+            let data = OsuParser.Parse(await zip.file(chartSettings.difficulty).async("string"));
+
+            providedSong.data = `data:audio/mpeg;base64,${await zip.file(data.audioFilename).async("base64")}`;
+            
+            const bpm = data.timingPoints[0].bpm;
+
+            chart.metadata = {
+                "name": data.title,
+                "filename": providedSong.name || "",
+                "bpm": bpm,
+                "subdivision": 8,
+                "offset": 0
+            }
+
+            data.hitObjects.forEach((hitObject) => {
+                let barLength = 60 / bpm;
+                let noteSecs = hitObject.time / 1000;
+                let beat = noteSecs / barLength + 1;
+                beat = toSafe(beat, 4);
+
+                if (chartSettings.usearrows) {
+                    // ...
+                    if (hitObject.x < 320 && hitObject.y < 240)
+                        addNote(beat, "^", false);
+                    else if (hitObject.x > 320 && hitObject.y < 240)
+                        addNote(beat, ">", false);
+                    else if (hitObject.x < 320 && hitObject.y > 240)
+                        addNote(beat, "<", false);
+                    else if (hitObject.x > 320 && hitObject.y > 240)
+                        addNote(beat, "v", false);
+                    else addNote(beat, "o", false);
+                } else addNote(beat, "o", false);
+            });
+
+            break;
+        }
     }
     
     chart.notes = chart.notes.filter(x => !x.auto || (x.auto && !chart.notes.find(z => !z.auto && z.beat == x.beat)) ) // remove auto overlaps
