@@ -97,6 +97,7 @@ const PLAYERSETTINGS = {
     playerHappy: currentSettings.playerHappy || defaultPlayer[1], // hit emoji
     playerMissed: currentSettings.playerMissed || defaultPlayer[2], // miss emoji
     soundEffects: (currentSettings.soundEffects !== false), // play sound effects? (default true)
+    lightTheme: (currentSettings.lightTheme !== false), // play sound effects? (default false)
     skipWelcome: (currentSettings.skipWelcome === true), // skip welcome message (default false)
     inputOffset: Number(currentSettings.inputOffset) || 0, // input offset, lower if hitting too early and raise if hitting too late
     hitWindowMultiplier: Number(currentSettings.hitWindowMultiplier) || 1, // hit window multiplier, higher = more lenient
@@ -121,6 +122,7 @@ $('#controlSchemeSelector').html(Object.entries(CONTROLSCHEMES).map(x => `<optio
 // settings menu
 $('#playerIcon').html(twemojiParse(PLAYERSETTINGS.player))
 $('#playSFX').prop('checked', PLAYERSETTINGS.soundEffects)
+$('#lightTheme').prop('checked', PLAYERSETTINGS.lightTheme)
 $('#skipWelcome').prop('checked', PLAYERSETTINGS.skipWelcome)
 $('#changeArrowsToControls').prop('checked', PLAYERSETTINGS.changeArrowsToControls)
 $('#inputOffset').val(PLAYERSETTINGS.inputOffset)
@@ -209,4 +211,6 @@ const browserDoesntSuck = typeof window.showSaveFilePicker === "function"
 if (!browserDoesntSuck) $('.usesFilesystem').addClass('unsupported')
 
 // firefox can go fuck itself
-if (!Array.prototype.findLast) Array.prototype.findLast = function(fn) { let found = this.filter(fn); return found[found.length - 1] }
+if (!Array.prototype.findLast) Array.prototype.findLast = function (fn) { let found = this.filter(fn); return found[found.length - 1] }
+
+setTheme();

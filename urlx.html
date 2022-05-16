@@ -14,7 +14,7 @@
     <link href="./urlx.css?v=6" type="text/css" rel="stylesheet">
     <link rel="icon" href="./assets/link.svg"></link>
 </head>
-<body>
+<body class="defaultTheme">
     <div id="editor">
         <div id="editorButtons">
             <div class="editorSectionSection"> <!-- left -->
@@ -252,6 +252,15 @@
                     <span></span>
                 </label>
                 <p class="settingInfo">Enable the playback of sound effects for hits, misses, etc</p>
+            </div>
+
+            <div class="playerSetting">
+                <p>Light Theme (experimental)</p>
+                <label>
+                    <input type="checkbox" id="lightTheme" onclick="PLAYERSETTINGS.lightTheme = $(this).prop('checked'); saveSettings(); setTheme()">
+                    <span></span>
+                </label>
+                <p class="settingInfo">For the people that like it</p>
             </div>
 
             <div class="playerSetting">
@@ -498,6 +507,7 @@
 <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
 
 <script type="text/javascript" src="./scripts/miscfunctions.js?v=6"></script>
+<script type="text/javascript" src="./scripts/theme.js?v=6"></script>
 <script type="text/javascript" src="./scripts/config.js?v=6"></script>
 <script type="text/javascript" src="./scripts/inputhandler.js?v=6"></script>
 <script type="text/javascript" src="./scripts/fileupload.js?v=6"></script>
