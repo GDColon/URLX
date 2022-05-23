@@ -521,4 +521,9 @@
     // popup closing
     $(document).on('click', '.popup:not(.importantPopup)', function(e) { if ($(e.target).is('.popup')) $('.popup').hide() } );
 
+    // warn user before leaving the page
+    window.addEventListener("beforeunload", function (e) {
+        e.preventDefault();
+        e.returnValue = "";
+    });
 </script>

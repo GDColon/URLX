@@ -75,8 +75,3 @@ function twemojiParse(str) {
 function hitWindow() {
     return WINDOWS.hit * PLAYERSETTINGS.hitWindowMultiplier
 }
-
-window.addEventListener("beforeunload", function (e) {
-    e.preventDefault();
-    e.returnValue = "";
-});
