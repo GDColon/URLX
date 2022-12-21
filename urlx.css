@@ -289,8 +289,8 @@ hr {
 }
 
 .note .emoji .twemoji {
-    width: 70%;
-    height: 70%;
+    width: 32px;
+    height: 32px;
     filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.33))
 }
 
